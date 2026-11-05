@@ -504,12 +504,13 @@ $('#tbody').onclick = ev => {
       '>=' and this has to do the same. */
 function snpQuery(win) {
   if (!win || win.startsWith('liftover')) return;
-  const tab = 'snpfisher_' + Date.now();
-  const w = window.open('', tab);           // inside the click, so not popup-blocked
   const f = document.createElement('form');
   f.method = 'POST';
   f.action = 'https://snpfisher.nichd.nih.gov/snpfisher/snpTextOracle.jsp';
-  f.target = tab;
+  // Plain _blank: the oracle answers with an attachment, so Chrome downloads the
+  // file and closes the transient tab itself -- no stray about:blank left behind.
+  // If the response ever comes back inline instead, it renders in that tab.
+  f.target = '_blank';
   const fields = {};
   for (const s of ['FLI', 'TL', 'WIK']) {
     fields[s + 'filter1'] = '>='; fields[s + 'filter2'] = '0.0';
@@ -529,8 +530,6 @@ function snpQuery(win) {
   // nothing but a console entry. Call the prototype method instead.
   HTMLFormElement.prototype.submit.call(f);
   setTimeout(() => f.remove(), 2000);       // must outlive the queued navigation
-  if (!w) alert('Your browser blocked the SNPfisher tab. Allow pop-ups for this '
-    + 'page and press SNP again.');
 }
 
 /* ---------- export ---------- */
