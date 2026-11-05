@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide Report</title>
+<style>
+:root{
+  --bg:#f7f7f5; --panel:#ffffff; --ink:#15161a; --muted:#6b6f76; --line:#e3e4e8;
+  --accent:#2f6fd0; --good:#1a7f4b; --warn:#b06a00; --bad:#b4342b;
+  --chip:#eef1f6; --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.05);
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+:root:not([data-theme="light"]){ @media (prefers-color-scheme:dark){
+  --bg:#111317; --panel:#181b21; --ink:#e9eaee; --muted:#9aa0aa; --line:#272b33;
+  --accent:#6ea8fe; --good:#49c98a; --warn:#e0a44a; --bad:#f0837a; --chip:#222630;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3);
+}}
+:root[data-theme="dark"]{
+  --bg:#111317; --panel:#181b21; --ink:#e9eaee; --muted:#9aa0aa; --line:#272b33;
+  --accent:#6ea8fe; --good:#49c98a; --warn:#e0a44a; --bad:#f0837a; --chip:#222630;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+.wrap{max-width:1680px;margin:0 auto;padding:20px 16px 80px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;margin-bottom:4px}
+h1{font-size:21px;margin:0;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{color:var(--muted);font-size:13px}
+.sub a{color:var(--accent)}
+.bar{display:flex;gap:8px;margin-left:auto;align-items:center}
+button,select,input[type=text],input[type=number]{
+  font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);
+  border-radius:8px;padding:6px 10px}
+button{cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#fff;border-color:transparent}
+.panels{display:grid;grid-template-columns:290px 1fr;gap:16px;margin-top:16px}
+@media(max-width:1100px){.panels{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:14px;box-shadow:var(--shadow)}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  margin:0 0 10px}
+.card + .card{margin-top:14px}
+.f{margin-bottom:11px}
+.f label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);
+  margin-bottom:3px}
+.f label b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;
+  padding:3px 10px;font-size:12.5px;cursor:pointer;user-select:none}
+.chip[aria-pressed=true]{background:var(--accent);color:#fff;border-color:transparent}
+.chip i.sm{font-style:normal;font-size:10px;margin-left:5px;opacity:.85}
+.chip i.asymmetric{color:var(--good)}
+.chip i.symmetric{color:var(--bad)}
+.chip i.noncoding{color:var(--muted)}
+.chip[aria-pressed=true] i.sm{color:#fff;opacity:.9}
+.chip.dim{opacity:.4}
+.lnk{background:none;border:0;color:var(--accent);font-size:11.5px;padding:0 3px;
+  cursor:pointer;text-decoration:underline}
+.lnk:hover{opacity:.75}
+.stats{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);
+  margin:0 0 10px;padding:10px 14px;background:var(--panel);border:1px solid var(--line);
+  border-radius:10px}
+.stats b{color:var(--ink);font-variant-numeric:tabular-nums}
+.tablewrap{overflow:auto;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{position:sticky;top:0;background:var(--panel);z-index:2;cursor:pointer;
+  font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+  border-bottom:1.5px solid var(--line);user-select:none}
+th:hover{color:var(--accent)}
+th .ar{opacity:.5;font-size:10px}
+tbody tr:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.seq{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em}
+.seq .pam{color:var(--bad);font-weight:600}
+.pill{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11.5px;
+  font-weight:600;background:var(--chip)}
+.pill.good{background:color-mix(in srgb,var(--good) 20%,transparent);color:var(--good)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 20%,transparent);color:var(--bad)}
+.score{font-weight:700;font-variant-numeric:tabular-nums}
+.bars{display:block;height:4px;border-radius:2px;background:var(--chip);margin-top:3px}
+.bars i{display:block;height:100%;border-radius:2px;background:var(--accent)}
+.mini{font-size:11.5px;color:var(--muted)}
+.act{display:flex;gap:4px}
+.act button{padding:2px 7px;font-size:11.5px;border-radius:6px}
+tr.detail td{background:color-mix(in srgb,var(--accent) 4%,transparent);
+  white-space:normal;padding:12px 16px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));
+  gap:16px 22px;align-items:start}
+/* A grid item defaults to min-width:auto, so a wide inner table cannot shrink and
+   spills across the next column. Let the items shrink and the inner tables wrap. */
+.dgrid>div{min-width:0}
+.dgrid h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);margin:0 0 6px}
+table.inner{font-size:12.5px;width:100%;max-width:100%}
+table.inner th,table.inner td{padding:4px 7px;border-bottom:1px solid var(--line);
+  white-space:normal;overflow-wrap:anywhere;vertical-align:top}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
+code{font-family:var(--mono);font-size:12px;background:var(--chip);padding:1px 5px;
+  border-radius:4px}
+.help{cursor:help;border-bottom:1px dotted var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Guide candidates — <em id="gene"></em></h1>
+    <span class="sub" id="meta"></span>
+    <div class="bar">
+      <button id="theme" title="Toggle theme">◐</button>
+      <button id="reset">Reset</button>
+      <button class="primary" id="export">Export filtered CSV</button>
+    </div>
+  </header>
+
+  <div class="panels">
+    <div>
+      <div class="card">
+        <h2>Filters</h2>
+        <div class="f"><label>Min efficiency <b id="vEff"></b></label>
+          <input type="range" id="fEff" min="0" max="1" step="0.01" value="0"></div>
+        <div class="f"><label>Min frameshift % <b id="vFs"></b></label>
+          <input type="range" id="fFs" min="0" max="100" step="1" value="0"></div>
+        <div class="f"><label>Min bp to splice edge <b id="vEdge"></b></label>
+          <input type="range" id="fEdge" min="-30" max="120" step="1" value="0">
+          <span class="mini">Negative = the cut falls <i>outside</i> the exon, in the
+            intron. At 0 those are hidden.</span></div>
+        <div class="f"><label>Max SNPs in target <b id="vSnp"></b></label>
+          <input type="range" id="fSnp" min="0" max="10" step="1" value="10"></div>
+        <div class="f"><label>Max self-complementarity <b id="vSc"></b></label>
+          <input type="range" id="fSc" min="0" max="10" step="1" value="10"></div>
+        <div class="f"><label>Off-targets</label>
+          <select id="fMm" style="width:100%">
+            <option value="any">any</option>
+            <option value="clean" selected>MM1–MM3 all zero</option>
+            <option value="strict">MM0–MM3 all zero (incl. alt contigs)</option>
+          </select></div>
+        <div class="f"><label>Symmetry</label>
+          <select id="fSym" style="width:100%">
+            <option value="any">any</option>
+            <option value="asymmetric">asymmetric only</option>
+            <option value="symmetric">symmetric only</option>
+          </select></div>
+        <div class="f"><label>Exons
+            <span><button class="lnk" id="exAll">all</button>&middot;<button
+              class="lnk" id="exNone">none</button></span></label>
+          <div class="chips" id="fExons"></div>
+          <span class="mini"><b style="color:var(--good)">asym</b> = asymmetric
+            (preferred) &middot; <b style="color:var(--bad)">sym</b> = symmetric
+            &middot; faded = no guides cut in that exon</span>
+          <span class="mini" id="exNote"></span></div>
+        <div class="f"><label>Search sequence / rank</label>
+          <input type="text" id="fTxt" placeholder="e.g. GGGGG or 226" style="width:100%"></div>
+        <div class="f"><label>Your wild-type strain</label>
+          <select id="fStrain" style="width:100%">
+            <option value="any">any strain (most conservative)</option>
+            <option value="tl">TL &mdash; T&uuml;pfel long fin</option>
+            <option value="wik">WIK &mdash; Wild India Kolkata</option>
+            <option value="fli">Tg(fli1a-eGFP)</option>
+          </select>
+          <span class="mini">SNPfisher only genotyped these three lines. If you use
+            AB or TU, leave this on <i>any</i> &mdash; a SNP seen in several lines is
+            more likely segregating in yours too.</span></div>
+      </div>
+
+      <div class="card">
+        <h2>Ranking weights</h2>
+        <div class="f"><label>Efficiency (CRISPRscan) <b id="wvEff"></b></label>
+          <input type="range" id="wEff" min="0" max="3" step="0.1" value="1"></div>
+        <div class="f"><label>Frameshift frequency <b id="wvFs"></b></label>
+          <input type="range" id="wFs" min="0" max="3" step="0.1" value="1.5"></div>
+        <div class="f"><label>inDelphi precision <b id="wvPr"></b></label>
+          <input type="range" id="wPr" min="0" max="3" step="0.1" value="0.3"></div>
+        <div class="f"><label>Distance from splice edge <b id="wvEdge"></b></label>
+          <input type="range" id="wEdge" min="0" max="3" step="0.1" value="0.3"></div>
+        <div class="f"><label>Off-target penalty <b id="wvMm"></b></label>
+          <input type="range" id="wMm" min="0" max="3" step="0.1" value="1"></div>
+        <div class="f"><label>SNP penalty <b id="wvSnp"></b></label>
+          <input type="range" id="wSnp" min="0" max="3" step="0.1" value="0.8"></div>
+        <div class="f"><label>Self-complementarity penalty <b id="wvSc"></b></label>
+          <input type="range" id="wSc" min="0" max="3" step="0.1" value="0.2"></div>
+        <div class="f"><label>Asymmetric-exon bonus <b id="wvAsym"></b></label>
+          <input type="range" id="wAsym" min="0" max="3" step="0.1" value="0.5"></div>
+        <p class="note">Each factor is min–max normalised across the guides currently
+          shown, multiplied by its weight, and summed. Set a weight to 0 to ignore it.
+          Sort by <b>Score</b> to use this ranking.</p>
+      </div>
+
+      <div class="card">
+        <h2>Thresholds used by Kroll</h2>
+        <p class="note">
+          Efficiency &gt; 0.60 · frameshift &gt; 80% (66% = random, below that is worse
+          than chance) · MM0–MM3 all zero, but a single MM0 hit on an
+          <span class="help" title="An alternate assembly contig carrying a duplicate copy of the locus. Not a real second cut site.">alt contig</span>
+          is an assembly ghost copy and can be ignored · no SNPs across the 23-mer in
+          your strain. He gives <b>no</b> numeric rule for distance from the splice
+          boundary — that filter is yours to set.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <div class="stats" id="stats"></div>
+      <div class="tablewrap">
+        <table id="tbl">
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="empty" hidden>No guides match these filters.</div>
+      </div>
+      <p class="note">
+        Click a row to expand primers, inDelphi detail and SNPs. <b>CC</b> opens the
+        CHOPCHOP page for that guide; <b>SNP</b> re-queries SNPfisher live in a new tab
+        (works for any row, including ones not pre-queried by the script).
+        Sequences are shown with the <span class="seq"><span class="pam">PAM</span></span>
+        highlighted — order the 20&nbsp;nt <i>without</i> it.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/;
+const G = DATA.guides;
+const $ = s => document.querySelector(s);
+
+/* ---------- header ---------- */
+$('#gene').textContent = DATA.gene;
+$('#meta').innerHTML = `${DATA.build} · ${DATA.scoring} · ` +
+  (DATA.transcript ? `ref transcript ${DATA.transcript} (${DATA.exonTotal} exons) · ` : '') +
+  `${G.length} guides · <a href="${DATA.jobUrl}" target="_blank" rel="noopener">CHOPCHOP job</a>` +
+  ` · generated ${DATA.generated}`;
+
+/* ---------- theme ---------- */
+$('#theme').onclick = () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('gr-theme', next); } catch (e) {}
+};
+try { const t = localStorage.getItem('gr-theme');
+  if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+
+/* ---------- exon chips ---------- */
+const exInfo = (DATA.exonInfo && DATA.exonInfo.length) ? DATA.exonInfo
+  : [...new Set(G.map(g => g.exon).filter(e => e !== '' && e != null))]
+      .sort((a, b) => a - b)
+      .map(n => ({ n, symmetry: (G.find(g => g.exon === n) || {}).symmetry || '',
+                   guides: G.filter(g => g.exon === n).length }));
+const exons = exInfo.map(e => e.n);
+const exOn = new Set(exons);
+const SYMSHORT = { asymmetric: 'asym', symmetric: 'sym', noncoding: 'UTR' };
+$('#fExons').innerHTML = exInfo.map(e => {
+  const why = [];
+  if (e.first) why.push('exon 1 - avoid, alternative start codons downstream');
+  if (e.last) why.push('last exon - a frameshift here escapes NMD');
+  if (!e.guides) why.push('no guide cuts in this exon');
+  if (e.coding != null) why.push(`${e.coding} coding bp of ${e.len}`);
+  return `<span class="chip${e.guides ? '' : ' dim'}" data-ex="${e.n}"
+      aria-pressed="true" title="${why.join(' | ')}"><b>${e.n}</b>` +
+    (e.symmetry ? `<i class="sm ${e.symmetry}">${SYMSHORT[e.symmetry] || ''}</i>` : '') +
+    `</span>`;
+}).join('') || '<span class="mini">no exon annotation</span>';
+const setAllExons = on => {
+  exOn.clear();
+  if (on) exons.forEach(e => exOn.add(e));
+  document.querySelectorAll('#fExons .chip')
+    .forEach(c => c.setAttribute('aria-pressed', on ? 'true' : 'false'));
+  render();
+};
+const exNote = $('#exNote');
+if (exNote) exNote.innerHTML = DATA.transcript
+  ? `Exon numbers and symmetry follow <b>${DATA.transcript}</b>` +
+    (DATA.aaLen ? ` (${DATA.exonTotal} exons, ${DATA.aaLen} aa)` : '') +
+    `, the <b>longest protein-coding transcript</b> &mdash; Kroll's rule. ` +
+    `Symmetry uses the <b>coding</b> length of each exon only, with any UTR excluded, ` +
+    `because the ribosome never reads UTR. A gene with genuinely different isoforms ` +
+    `may number its exons differently under another transcript.`
+  : 'No coding transcript was found, so exons are not annotated.';
+$('#exAll').onclick = () => setAllExons(true);
+$('#exNone').onclick = () => setAllExons(false);
+$('#fExons').onclick = ev => {
+  const c = ev.target.closest('.chip'); if (!c) return;
+  const e = +c.dataset.ex;
+  if (exOn.has(e)) { exOn.delete(e); c.setAttribute('aria-pressed', 'false'); }
+  else { exOn.add(e); c.setAttribute('aria-pressed', 'true'); }
+  render();
+};
+
+/* ---------- helpers ---------- */
+const num = v => (v === '' || v == null || isNaN(+v)) ? null : +v;
+const offPenalty = g => (g.mm1 || 0) * 4 + (g.mm2 || 0) * 2 + (g.mm3 || 0);
+const strainKey = () => $('#fStrain').value;
+const snpOf = g => { const k = strainKey();
+  return num(k === 'any' ? g.snps : g['snp_' + k]); };
+const fmt = (v, d = 2) => v == null ? '—' : (+v).toFixed(d);
+
+function pass(g) {
+  if (num(g.efficiency) != null && num(g.efficiency) < +$('#fEff').value) return false;
+  const fs = num(g.frameshift);
+  if (+$('#fFs').value > 0 && (fs == null || fs < +$('#fFs').value)) return false;
+  const ed = num(g.bp_to_splice);
+  if (ed != null && ed < +$('#fEdge').value) return false;
+  const sn = snpOf(g);
+  if (+$('#fSnp').value < 10 && sn != null && sn > +$('#fSnp').value) return false;
+  if (num(g.selfcompl) > +$('#fSc').value) return false;
+  const mm = $('#fMm').value;
+  if (mm === 'clean' && offPenalty(g) > 0) return false;
+  if (mm === 'strict' && (offPenalty(g) > 0 || (g.mm0 || 0) > 0)) return false;
+  const sym = $('#fSym').value;
+  if (sym !== 'any' && g.symmetry !== sym) return false;
+  if (g.exon !== '' && g.exon != null && exOn.size && !exOn.has(+g.exon)) return false;
+  const q = $('#fTxt').value.trim().toUpperCase();
+  if (q && !(g.target.includes(q) || String(g.rank) === q)) return false;
+  return true;
+}
+
+function scored(rows) {
+  const W = { eff: +$('#wEff').value, fs: +$('#wFs').value, pr: +$('#wPr').value,
+              edge: +$('#wEdge').value, mm: +$('#wMm').value, snp: +$('#wSnp').value,
+              sc: +$('#wSc').value, asym: +$('#wAsym').value };
+  const vals = k => rows.map(k).filter(v => v != null);
+  const mk = k => { const v = vals(k); if (!v.length) return () => 0;
+    const lo = Math.min(...v), hi = Math.max(...v);
+    return x => (x == null || hi === lo) ? 0 : (x - lo) / (hi - lo); };
+  const nEff = mk(g => num(g.efficiency)), nFs = mk(g => num(g.frameshift));
+  const nPr = mk(g => num(g.precision)), nEd = mk(g => num(g.bp_to_splice));
+  const nMm = mk(g => offPenalty(g)), nSn = mk(g => snpOf(g) ?? 0);
+  const nSc = mk(g => num(g.selfcompl));
+  const tot = Object.values(W).reduce((a, b) => a + b, 0) || 1;
+  rows.forEach(g => {
+    g._score = (
+      W.eff * nEff(num(g.efficiency)) + W.fs * nFs(num(g.frameshift)) +
+      W.pr * nPr(num(g.precision)) + W.edge * nEd(num(g.bp_to_splice)) +
+      W.mm * (1 - nMm(offPenalty(g))) + W.snp * (1 - nSn(snpOf(g) ?? 0)) +
+      W.sc * (1 - nSc(num(g.selfcompl))) +
+      W.asym * (g.symmetry === 'asymmetric' ? 1 : 0)
+    ) / tot;
+  });
+  return rows;
+}
+
+/* ---------- columns ---------- */
+const COLS = [
+  { k: '_score', t: 'Score', n: 1, r: g => `<span class="score">${fmt(g._score, 3)}</span>
+      <span class="bars"><i style="width:${(g._score * 100).toFixed(0)}%"></i></span>` },
+  { k: 'rank', t: 'CC rank', n: 1 },
+  { k: 'exon', t: 'Exon', r: g => g.exon === '' ? '—'
+      : `${g.exon}<span class="mini">/${g.exon_total}</span>` },
+  { k: 'symmetry', t: 'Sym', r: g => (g.region && g.region !== 'exon')
+      ? `<span class="pill bad" title="The cut site falls ${Math.abs(num(g.bp_to_splice)||0)} bp outside the exon. An indel here lands in the intron and usually will not shift the frame.">${g.region}</span>`
+      : g.symmetry === 'asymmetric' ? '<span class="pill good">asym</span>'
+      : g.symmetry === 'symmetric' ? '<span class="pill bad">sym</span>' : '—' },
+  { k: 'target', t: 'Target (PAM in red)', r: g =>
+      `<span class="seq">${g.proto}<span class="pam">${g.pam}</span></span>` },
+  { k: 'strand', t: '±' },
+  { k: 'cut', t: 'Cut', n: 1, r: g => g.cut.toLocaleString() },
+  { k: 'bp_to_splice', t: 'bp→edge', n: 1 },
+  { k: 'efficiency', t: 'Eff', n: 1, r: g => {
+      const v = num(g.efficiency);
+      return `<span class="pill ${v >= .6 ? 'good' : 'warn'}">${fmt(v)}</span>`; } },
+  { k: 'frameshift', t: 'Frameshift %', n: 1, r: g => {
+      const v = num(g.frameshift); if (v == null) return '—';
+      const c = v > 80 ? 'good' : v > 66 ? 'warn' : 'bad';
+      return `<span class="pill ${c}">${fmt(v, 1)}</span>`; } },
+  { k: 'precision', t: 'Precis', n: 1, r: g => fmt(num(g.precision), 3) },
+  { k: 'mm0', t: 'MM0', n: 1, r: g => `<span class="mini" title="A single MM0 hit is usually an alt-contig ghost copy, not a real off-target.">${g.mm0}</span>` },
+  { k: '_off', t: 'MM1/2/3', n: 1, r: g => {
+      const p = offPenalty(g);
+      return `<span class="pill ${p ? 'bad' : 'good'}">${g.mm1}/${g.mm2}/${g.mm3}</span>`; } },
+  { k: 'snps', t: 'SNPs', n: 1, r: g => {
+      const v = snpOf(g), tot = num(g.snps);
+      if (g.zv9 && String(g.zv9).startsWith('liftover')) return '<span class="mini">no lift</span>';
+      if (v == null) return '<span class="mini">not queried</span>';
+      const extra = (strainKey() !== 'any' && tot > v)
+        ? `<span class="mini" title="${tot} SNP(s) in this window in total; only ${v} segregating in the strain you picked."> /${tot}</span>` : '';
+      return `<span class="pill ${v ? 'bad' : 'good'}">${v}</span>${extra}`; } },
+  { k: 'gc', t: 'GC%', n: 1 },
+  { k: 'selfcompl', t: 'SelfC', n: 1 },
+  { k: '_act', t: '', r: g => `<span class="act">
+      <button data-cc="${g.rank}" title="Open this guide on CHOPCHOP">CC</button>
+      <button data-snp="${g.zv9 || ''}" ${g.zv9 && !String(g.zv9).startsWith('liftover') ? '' : 'disabled'} title="Query SNPfisher for this 23-mer">SNP</button>
+      <button data-copy="${g.proto}" title="Copy the 20 nt (no PAM) for ordering">⧉</button>
+    </span>` },
+];
+
+let sortK = '_score', sortDir = -1;
+$('#thead').innerHTML = COLS.map(c =>
+  `<th data-k="${c.k}">${c.t} <span class="ar"></span></th>`).join('');
+$('#thead').onclick = ev => {
+  const th = ev.target.closest('th'); if (!th) return;
+  const k = th.dataset.k; if (k === '_act') return;
+  if (sortK === k) sortDir = -sortDir; else { sortK = k; sortDir = -1; }
+  render();
+};
+
+function render() {
+  for (const [id, el] of [['vEff', 'fEff'], ['vFs', 'fFs'], ['vEdge', 'fEdge'],
+      ['vSnp', 'fSnp'], ['vSc', 'fSc']])
+    $('#' + id).textContent = $('#' + el).value + ($('#' + el).id === 'fSnp' &&
+      $('#' + el).value === '10' ? '+' : '');
+  for (const [v, w] of [['wvEff', 'wEff'], ['wvFs', 'wFs'], ['wvPr', 'wPr'],
+      ['wvEdge', 'wEdge'], ['wvMm', 'wMm'], ['wvSnp', 'wSnp'], ['wvSc', 'wSc'],
+      ['wvAsym', 'wAsym']])
+    $('#' + v).textContent = (+$('#' + w).value).toFixed(1);
+
+  let rows = G.filter(pass);
+  rows = scored(rows);
+  const key = g => sortK === '_off' ? offPenalty(g)
+    : sortK === '_score' ? g._score
+    : (typeof g[sortK] === 'string' && isNaN(+g[sortK])) ? g[sortK] : (num(g[sortK]) ?? -1e9);
+  rows.sort((a, b) => { const x = key(a), y = key(b);
+    return (x > y ? 1 : x < y ? -1 : 0) * sortDir; });
+
+  document.querySelectorAll('#thead th .ar').forEach(s => s.textContent = '');
+  const th = document.querySelector(`#thead th[data-k="${sortK}"] .ar`);
+  if (th) th.textContent = sortDir < 0 ? '▼' : '▲';
+
+  const pct = (n, d) => d ? ` <b>${n}</b> (${(100 * n / d).toFixed(0)}%)` : ' <b>0</b>';
+  const fsOk = rows.filter(g => num(g.frameshift) > 80).length;
+  const effOk = rows.filter(g => num(g.efficiency) >= .6).length;
+  const snpOk = rows.filter(g => snpOf(g) === 0).length;
+  $('#stats').innerHTML =
+    `showing <b>${rows.length}</b> of <b>${G.length}</b>` +
+    ` · efficiency ≥0.60:${pct(effOk, rows.length)}` +
+    ` · frameshift &gt;80%:${pct(fsOk, rows.length)}` +
+    ` · SNP-free${strainKey() === 'any' ? '' : ' in ' + strainKey().toUpperCase()}:${pct(snpOk, rows.length)}` +
+    ` · exons shown: <b>${[...exOn].sort((a, b) => a - b).join(', ') || 'none'}</b>`;
+
+  $('#tbody').innerHTML = rows.map(g => `<tr data-r="${g.rank}">` +
+    COLS.map(c => `<td class="${c.n ? 'num' : ''}">${c.r ? c.r(g) : (g[c.k] ?? '—')}</td>`)
+      .join('') + '</tr>').join('');
+  $('#empty').hidden = rows.length > 0;
+  window._rows = rows;
+}
+
+/* ---------- row expand ---------- */
+$('#tbody').onclick = ev => {
+  const btn = ev.target.closest('button');
+  if (btn) {
+    ev.stopPropagation();
+    if (btn.dataset.cc) window.open(`${DATA.jobUrl}details/${btn.dataset.cc}`, '_blank', 'noopener');
+    else if (btn.dataset.snp) snpQuery(btn.dataset.snp);
+    else if (btn.dataset.copy) { navigator.clipboard?.writeText(btn.dataset.copy);
+      btn.textContent = '✓'; setTimeout(() => btn.textContent = '⧉', 900); }
+    return;
+  }
+  const tr = ev.target.closest('tr[data-r]'); if (!tr) return;
+  const nxt = tr.nextElementSibling;
+  if (nxt && nxt.classList.contains('detail')) { nxt.remove(); return; }
+  document.querySelectorAll('tr.detail').forEach(r => r.remove());
+  const g = G.find(x => x.rank == tr.dataset.r);
+  const prim = (g.primers || []).length ? `<table class="inner">
+      <tr><th>fwd</th><th>rev</th><th>Tm f/r</th><th>size</th></tr>` +
+      g.primers.map(p => `<tr><td class="seq">${p.fwd}</td><td class="seq">${p.rev}</td>
+        <td>${p.tm_f} / ${p.tm_r}</td><td>${p.size} bp</td></tr>`).join('') + '</table>'
+    : '<p class="mini">No primers returned for this guide.</p>';
+  const snp = (g.snp_detail || []).length ? `<table class="inner">
+      <tr><th>pos</th><th>ref→mut</th><th>FLI</th><th>TL</th><th>WIK</th></tr>` +
+      g.snp_detail.map(s => { const hot = k => (parseFloat(s[k]) > 0)
+          ? ' style="color:var(--bad);font-weight:600"' : '';
+        return `<tr><td>${s.Pos}</td><td>${s.Ref}→${s.Mut}</td>
+        <td${hot('FLI_FQ')}>${s.FLI_FQ}</td><td${hot('TL_FQ')}>${s.TL_FQ}</td>
+        <td${hot('WIK_FQ')}>${s.WIK_FQ}</td></tr>`; }).join('') +
+      '</table><p class="mini">Allele frequency per strain. If your strain shows &gt;0, pick another guide.</p>'
+    : `<p class="mini">${g.snps === 0 ? 'No SNPs in this 23-mer.' : 'Not queried — press SNP.'}</p>`;
+  const row = document.createElement('tr');
+  row.className = 'detail';
+  row.innerHTML = `<td colspan="${COLS.length}"><div class="dgrid">
+    <div><h3>Primers (CHOPCHOP / primer3)</h3>${prim}</div>
+    <div><h3>inDelphi</h3><table class="inner">
+      <tr><td>frameshift</td><td>${fmt(num(g.frameshift), 2)}%</td></tr>
+      <tr><td>precision</td><td>${fmt(num(g.precision), 3)}</td></tr>
+      <tr><td>microhomology deletions</td><td>${fmt(num(g.mh_del), 2)}%</td></tr>
+      <tr><td>expected indel length</td><td>${fmt(num(g.exp_indel), 2)} bp</td></tr></table></div>
+    <div><h3>Position</h3><table class="inner">
+      <tr><td>locus</td><td>${g.chrom}:${g.start.toLocaleString()} (${g.strand})</td></tr>
+      <tr><td>cut site</td><td>${g.cut.toLocaleString()}</td></tr>
+      <tr><td>exon</td><td>${g.exon || '—'} / ${g.exon_total || '—'} (${g.symmetry || '—'})</td></tr>
+      <tr><td>to splice edge</td><td>${g.bp_to_splice === '' ? '—' : g.bp_to_splice + ' bp'}</td></tr>
+      <tr><td>in CDS</td><td>${g.in_cds || '—'}</td></tr>
+      <tr><td>Zv9 window</td><td class="seq">${g.zv9 || '—'}</td></tr></table></div>
+    <div><h3>SNPfisher</h3>${snp}</div>
+  </div></td>`;
+  tr.after(row);
+};
+
+/* ---------- SNPfisher live re-query (real form POST, no CORS issue) ----------
+   Three things have to be right here or the button silently does nothing:
+   1. Endpoint. snpfisher.jsp just re-serves the Report Builder form and ignores
+      the query; snpTextOracle.jsp is what actually returns rows (text/plain).
+   2. Lifetime. Chrome queues the submission as a task, so a form removed
+      synchronously after submit() has its navigation dropped with no error.
+   3. Comparators. The form ships them as '= 0.0', which matches only SNPs at
+      exactly zero frequency and so returns an empty table. The pipeline forces
+      '>=' and this has to do the same. */
+function snpQuery(win) {
+  if (!win || win.startsWith('liftover')) return;
+  const tab = 'snpfisher_' + Date.now();
+  const w = window.open('', tab);           // inside the click, so not popup-blocked
+  const f = document.createElement('form');
+  f.method = 'POST';
+  f.action = 'https://snpfisher.nichd.nih.gov/snpfisher/snpTextOracle.jsp';
+  f.target = tab;
+  const fields = {};
+  for (const s of ['FLI', 'TL', 'WIK']) {
+    fields[s + 'filter1'] = '>='; fields[s + 'filter2'] = '0.0';
+    fields[s + 'filter3'] = '0';
+  }
+  Object.assign(fields, DATA.snpFields || {}, { query: win });
+  for (const s of ['FLI', 'TL', 'WIK'])
+    if (fields[s + 'filter1'] !== '>=') fields[s + 'filter1'] = '>=';
+  for (const k in fields) {
+    const i = document.createElement('input');
+    i.type = 'hidden'; i.name = k; i.value = fields[k];
+    f.appendChild(i);
+  }
+  document.body.appendChild(f);
+  // SNPfisher's form has an input named "submit", and a named control shadows the
+  // form's own method -- so f.submit() throws TypeError and the button dies with
+  // nothing but a console entry. Call the prototype method instead.
+  HTMLFormElement.prototype.submit.call(f);
+  setTimeout(() => f.remove(), 2000);       // must outlive the queued navigation
+  if (!w) alert('Your browser blocked the SNPfisher tab. Allow pop-ups for this '
+    + 'page and press SNP again.');
+}
+
+/* ---------- export ---------- */
+$('#export').onclick = () => {
+  const keys = ['rank', '_score', 'exon', 'exon_total', 'symmetry', 'bp_to_splice',
+    'target', 'proto', 'pam', 'chrom', 'start', 'strand', 'cut', 'efficiency',
+    'frameshift', 'precision', 'mh_del', 'gc', 'selfcompl', 'mm0', 'mm1', 'mm2',
+    'mm3', 'zv9', 'snps'];
+  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = [keys.join(',')].concat((window._rows || []).map(g =>
+    keys.map(k => esc(k === '_score' ? (g._score ?? '').toFixed?.(4) ?? '' : g[k])).join(',')));
+  const b = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = `${DATA.gene}_${DATA.build}_filtered.csv`;
+  a.click();
+};
+
+$('#reset').onclick = () => {
+  const d = { fEff: 0, fFs: 0, fEdge: 0, fSnp: 10, fSc: 10, wEff: 1, wFs: 1.5, wPr: .3,
+    wEdge: .3, wMm: 1, wSnp: .8, wSc: .2, wAsym: .5 };
+  for (const k in d) $('#' + k).value = d[k];
+  $('#fMm').value = 'clean'; $('#fSym').value = 'any'; $('#fTxt').value = '';
+  $('#fStrain').value = 'any';
+  setAllExons(true);
+};
+
+document.querySelectorAll('input[type=range],select,#fTxt')
+  .forEach(el => el.addEventListener('input', render));
+render();
+</script>
+</body>
+</html>

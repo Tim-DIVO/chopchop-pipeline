@@ -1,0 +1,8 @@
+# generated reports and caches -- never commit run output
+.cache/
+out/
+out_*/
+*.log
+*.csv
+*_danRer*.html
+__pycache__/
