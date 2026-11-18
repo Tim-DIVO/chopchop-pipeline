@@ -78,7 +78,7 @@ th .ar{opacity:.5;font-size:10px}
 tbody tr:hover{background:color-mix(in srgb,var(--accent) 7%,transparent)}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
 .seq{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em}
-.seq .pam{color:var(--bad);font-weight:600}
+.seq .pam,.seqline .pam{color:var(--bad);font-weight:600}
 .pill{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11.5px;
   font-weight:600;background:var(--chip)}
 .pill.good{background:color-mix(in srgb,var(--good) 20%,transparent);color:var(--good)}
@@ -88,6 +88,147 @@ td.num{text-align:right;font-variant-numeric:tabular-nums}
 .bars{display:block;height:4px;border-radius:2px;background:var(--chip);margin-top:3px}
 .bars i{display:block;height:100%;border-radius:2px;background:var(--accent)}
 .mini{font-size:11.5px;color:var(--muted)}
+/* An author `display` rule beats the UA stylesheet's [hidden]{display:none},
+   so a flex/grid container with [hidden] stays visible. Force it. */
+[hidden]{display:none !important}
+/* ---- view tabs ---- */
+.tabs{display:flex;gap:4px;margin:10px 0 14px;border-bottom:1px solid var(--line)}
+.tabs button{background:none;border:none;border-bottom:2px solid transparent;
+  padding:8px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button:hover{color:var(--ink)}
+/* ---- job freshness ---- */
+.jobwarn{background:var(--panel);border:1px solid var(--line);border-left:3px solid #d9822b;
+  border-radius:8px;padding:10px 12px;margin:0 0 14px;font-size:12.5px}
+.jobwarn code{font-family:var(--mono);font-size:11.5px;background:var(--chip);
+  padding:2px 5px;border-radius:4px;display:inline-block;word-break:break-all}
+.jobwarn .cmd{margin:7px 0 0;display:flex;gap:6px;align-items:flex-start}
+/* ---- primer page ---- */
+/* Hierarchy, in order of what a reader needs: the four numbers that define the
+   search, then the one warning that changes what they should do, then the
+   controls, then everything else behind a disclosure. Prose is kept to one
+   line; the long explanations live in README.md where they can be read once. */
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px}
+.phead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.phead h2{margin:0;font-size:16px;letter-spacing:-.01em}
+.phead .sub{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.phead .sp{margin-left:auto}
+.phead button{font-size:12px;padding:5px 10px;border-radius:7px}
+.phead .ohl{display:flex;align-items:center;gap:5px;font-size:11.5px;
+  color:var(--muted);white-space:nowrap}
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));
+  gap:8px;margin-bottom:10px}
+.stat{background:var(--chip);border-radius:9px;padding:8px 11px;min-width:0}
+.stat b{display:block;font-size:15px;font-weight:650;letter-spacing:-.015em;
+  font-variant-numeric:tabular-nums;line-height:1.25}
+.stat span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.55px;
+  color:var(--muted);margin-top:1px}
+.pbtns{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pbtns button{font-size:12px;padding:5px 10px;border-radius:7px}
+.pbtns .ohl{display:flex;align-items:center;gap:5px;font-size:11.5px;
+  color:var(--muted);margin-left:2px}
+.pbtns .gap{margin-left:auto}
+details.pd{border:1px solid var(--line);border-radius:9px;margin-top:10px}
+details.pd>summary{cursor:pointer;font-size:12px;font-weight:600;padding:8px 11px;
+  list-style:none;color:var(--muted)}
+details.pd>summary:hover{color:var(--ink)}
+details.pd>summary::-webkit-details-marker{display:none}
+details.pd>summary::before{content:'';display:inline-block;width:0;height:0;
+  border:4.5px solid transparent;border-left-color:currentColor;margin-right:8px;
+  vertical-align:middle;transition:transform .12s ease}
+details.pd[open]>summary::before{border-left-color:transparent;
+  border-top-color:currentColor;margin-top:4px}
+details.pd[open]>summary{color:var(--ink);border-bottom:1px solid var(--line)}
+details.pd .body{padding:11px}
+.deflist{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  gap:5px 18px;font-size:11.5px}
+.deflist div{display:flex;justify-content:space-between;gap:10px;
+  border-bottom:1px dotted var(--line);padding-bottom:3px}
+.deflist dt{color:var(--muted)}
+.deflist dd{margin:0;text-align:right;color:var(--ink)}
+.ladder{font-size:11.5px;color:var(--muted);margin:9px 0 0}
+.ladder code{font-family:var(--mono);font-size:11px;background:var(--chip);
+  padding:1px 5px;border-radius:4px}
+.plocus{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:13px 16px 11px;margin-bottom:12px}
+.plocus h3{margin:0;font-size:14.5px;display:flex;align-items:center;gap:8px;
+  flex-wrap:wrap}
+.plocus h3 .sp{margin-left:auto;font-weight:400}
+.plocus .seqline{font-family:var(--mono);font-size:12.5px;letter-spacing:.4px;
+  margin:5px 0 2px;color:var(--muted)}
+.ptrack{width:100%;display:block;overflow:visible}
+.ptbl{font-size:12.5px;margin-top:8px;font-variant-numeric:tabular-nums}
+.ptbl th{font-size:10px;text-transform:uppercase;letter-spacing:.45px;color:var(--muted);
+  font-weight:600;text-align:left;padding:4px 7px;border-bottom:1px solid var(--line);
+  white-space:nowrap}
+.ptbl td{padding:4px 7px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ptbl tbody tr{cursor:pointer}
+.ptbl tbody tr:hover{background:color-mix(in srgb, var(--ink) 4%, transparent)}
+.ptbl tr.sel{background:color-mix(in srgb, var(--accent) 13%, transparent)}
+.ptbl tr.sel td{font-weight:600}
+.ptbl td:first-child,.ptbl th:first-child{width:26px;text-align:center;padding-left:9px}
+.ptbl tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.ptbl .num{text-align:right}
+.ptbl .seq{font-family:var(--mono);font-size:11px;letter-spacing:.2px}
+.condgrid{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.cond{font-size:11.5px;background:var(--chip);border-radius:6px;padding:4px 9px;
+  color:var(--muted)}
+.cond b{color:var(--ink);font-weight:600}
+.rrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));
+  gap:9px 14px;margin:0 0 10px}
+label.rr{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--muted)}
+label.rr:has(input[type=checkbox]){flex-direction:row;align-items:center;gap:6px}
+label.rr input[type=number],label.rr select{font:inherit;font-size:12.5px;color:var(--ink);
+  background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 7px}
+.rerun .cmd{margin:0 0 8px}
+.rerun .cmd code{font-family:var(--mono);font-size:11.5px;background:var(--chip);
+  padding:9px 11px;border-radius:7px;display:block;white-space:pre;overflow-x:auto}
+.rerun .hint{font-size:11.5px;color:var(--muted);margin:0 0 10px}
+.rerun .hint code{font-family:var(--mono);font-size:11px;background:var(--chip);
+  padding:1px 5px;border-radius:4px}
+.warnnote{color:var(--warn)}
+.morerow{margin-top:6px}
+.morerow button{font-size:11.5px;padding:4px 9px;border-radius:6px;color:var(--muted)}
+.ptrackhead{display:flex;gap:10px;align-items:baseline;font-size:11.5px;
+  color:var(--muted);margin:6px 0 0}
+.ptbl .seq{font-family:var(--mono);font-size:11.5px;letter-spacing:.3px}
+.ptbl tr:hover{background:color-mix(in srgb, var(--ink) 4%, transparent)}
+.pbadge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:999px;
+  background:var(--chip);color:var(--muted);margin-left:6px;vertical-align:middle}
+.pbadge.ok{background:#d8f0dd;color:#1c6b32}
+.pbadge.warn{background:#fdebd3;color:#8a5114}
+.pbadge.bad{background:#fadcdc;color:#8c2020}
+:root:not([data-theme="light"]) .pbadge.ok,:root[data-theme="dark"] .pbadge.ok{background:#1d3f28;color:#8fd8a6}
+:root:not([data-theme="light"]) .pbadge.warn,:root[data-theme="dark"] .pbadge.warn{background:#4a3416;color:#f0c184}
+:root:not([data-theme="light"]) .pbadge.bad,:root[data-theme="dark"] .pbadge.bad{background:#4a1f1f;color:#f0a0a0}
+.plegend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:2px 0 6px}
+.plegend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;
+  vertical-align:-1px}
+/* domain chips, conservation bar, pinned rows */
+.dom{display:inline-block;max-width:190px;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;vertical-align:bottom;padding:1px 6px;border-radius:5px;
+  font-size:11px;background:var(--chip);margin:1px 2px 0 0}
+.dom.key{background:color-mix(in srgb,var(--accent) 22%,transparent);
+  color:var(--accent);font-weight:600}
+.dom.proj{border:1px dashed color-mix(in srgb,var(--muted) 55%,transparent)}
+.cons{display:block;width:52px;height:5px;border-radius:3px;background:var(--chip)}
+.cons i{display:block;height:100%;border-radius:3px;background:var(--good)}
+.cons i.mid{background:var(--warn)} .cons i.low{background:var(--bad)}
+.zone{display:inline-block;padding:0 5px;border-radius:4px;font-size:10.5px;
+  font-weight:700;letter-spacing:.03em;margin-left:3px}
+.zone.critical{background:var(--bad);color:#fff}
+.zone.high{background:color-mix(in srgb,var(--warn) 85%,transparent);color:#1a1200}
+.zone.low,.zone.negligible{background:var(--chip);color:var(--muted)}
+tbody tr.pinned{background:color-mix(in srgb,var(--accent) 11%,transparent)}
+tbody tr.pinned:hover{background:color-mix(in srgb,var(--accent) 17%,transparent)}
+tbody tr.sep td{padding:3px 10px;background:var(--chip);color:var(--muted);
+  font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.star{background:none;border:0;cursor:pointer;font-size:14px;line-height:1;
+  padding:0 2px;color:var(--muted)}
+.star.on{color:var(--warn)}
+.btnrow{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.btnrow button{font-size:11.5px;padding:4px 8px;border-radius:6px}
 .act{display:flex;gap:4px}
 .act button{padding:2px 7px;font-size:11.5px;border-radius:6px}
 tr.detail td{background:color-mix(in srgb,var(--accent) 4%,transparent);
@@ -121,8 +262,47 @@ code{font-family:var(--mono);font-size:12px;background:var(--chip);padding:1px 5
     </div>
   </header>
 
-  <div class="panels">
+  <div class="tabs">
+    <button id="tabGuides" class="on">Guides</button>
+    <button id="tabPrimers">Primers</button>
+  </div>
+
+  <div class="jobwarn" id="jobWarn" hidden>
+    <b>CHOPCHOP links may be dead.</b> <span id="jobAge"></span>
+    CHOPCHOP expires finished jobs, which breaks the <b>CC</b> buttons and the
+    job link above. The data in this report is unaffected — it was captured when
+    the report was generated. To re-point the links at a fresh job:
+    <div class="cmd">
+      <code id="refreshCmd"></code>
+      <button id="copyRefresh">Copy</button>
+    </div>
+    <p class="mini" style="margin:7px 0 0">
+      That script re-submits with the identical options and matches guides by
+      genomic position, not by rank. It refuses to rewrite anything unless every
+      guide keeps its rank, because your starred guides are stored as rank
+      numbers. <span id="jobDismissWrap"><a href="#" id="jobDismiss">Dismiss</a></span>
+    </p>
+  </div>
+
+  <div class="panels" id="viewGuides">
     <div>
+      <div class="card" id="savedCard">
+        <h2>Saved guides <span class="mini" id="savedN"></span></h2>
+        <p class="note" id="savedEmpty">Click the ☆ on any row to save it. Saved
+          guides are pinned to the top of the table and kept in this browser for
+          this gene, so they survive a reload and a re-run of the pipeline.</p>
+        <div class="btnrow" id="savedBtns" hidden>
+          <button class="primary" id="svPrimerCmd">Copy primer-design command</button>
+          <button id="svLinks">Copy CHOPCHOP links</button>
+          <button id="svOligos">Copy 20-mers</button>
+          <button id="svIdt">Copy IDT FASTA</button>
+          <button id="svCsv">Export saved CSV</button>
+          <button id="svTxt">Download links .txt</button>
+          <button id="svRestore" hidden>Restore pipeline selection</button>
+          <button id="svClear">Clear</button>
+        </div>
+      </div>
+
       <div class="card">
         <h2>Filters</h2>
         <div class="f"><label>Min efficiency <b id="vEff"></b></label>
@@ -137,6 +317,34 @@ code{font-family:var(--mono);font-size:12px;background:var(--chip);padding:1px 5
           <input type="range" id="fSnp" min="0" max="10" step="1" value="10"></div>
         <div class="f"><label>Max self-complementarity <b id="vSc"></b></label>
           <input type="range" id="fSc" min="0" max="10" step="1" value="10"></div>
+        <div class="f"><label>Where a SNP is allowed to sit</label>
+          <select id="fZone" style="width:100%">
+            <option value="any">anywhere in the 23-mer</option>
+            <option value="nopam" selected>not in a PAM G</option>
+            <option value="noseed">not in a PAM G or the seed</option>
+          </select>
+          <span class="mini">Cas9 reads the two Gs of NGG through Arg1333/Arg1335
+            (Anders 2014), so a SNP there costs you the cut. The N is not read.
+            Inside the protospacer the 10 nt nearest the PAM (the seed) are the
+            strict ones; the PAM-distal 10 are largely tolerated (Hsu 2013).</span></div>
+        <div class="f"><label>Min human conservation at the cut <b id="vCons"></b></label>
+          <input type="range" id="fCons" min="0" max="100" step="5" value="0">
+          <span class="mini">Percent identity to the human ortholog in an
+            11-residue window around the cut site. At 0 the filter is off; guides
+            with no alignment there are always kept.</span></div>
+        <div class="f"><label>Alternative start codons</label>
+          <select id="fAtg" style="width:100%">
+            <option value="any">ignore</option>
+            <option value="nofirst">skip the first coding exon</option>
+            <option value="safe">skip exon 1 and cuts with a real re-initiation route</option>
+          </select>
+          <span class="mini">A frameshift upstream of an in-frame ATG can be
+            bypassed by re-initiation, giving a shortened but partly functional
+            protein. This is why Kroll's exon list ends with &ldquo;not exon 1&rdquo;.
+            A guide is only flagged when the ATG is within 40 codons <i>and</i> a
+            product re-initiated there would keep &ge;70% of the protein &mdash;
+            distance alone flags about half of all cut sites by chance and means
+            nothing on its own.</span></div>
         <div class="f"><label>Off-targets</label>
           <select id="fMm" style="width:100%">
             <option value="any">any</option>
@@ -189,9 +397,28 @@ code{font-family:var(--mono);font-size:12px;background:var(--chip);padding:1px 5
           <input type="range" id="wSc" min="0" max="3" step="0.1" value="0.2"></div>
         <div class="f"><label>Asymmetric-exon bonus <b id="wvAsym"></b></label>
           <input type="range" id="wAsym" min="0" max="3" step="0.1" value="0.5"></div>
+        <div class="f"><label>Human conservation bonus <b id="wvCons"></b></label>
+          <input type="range" id="wCons" min="0" max="3" step="0.1" value="0.4"></div>
+        <div class="f"><label>Annotated-domain bonus <b id="wvDom"></b></label>
+          <input type="range" id="wDom" min="0" max="3" step="0.1" value="0.3"></div>
+        <div class="f"><label>Re-initiation penalty <b id="wvAtg"></b></label>
+          <input type="range" id="wAtg" min="0" max="3" step="0.1" value="0.6"></div>
         <p class="note">Each factor is min–max normalised across the guides currently
           shown, multiplied by its weight, and summed. Set a weight to 0 to ignore it.
           Sort by <b>Score</b> to use this ranking.</p>
+        <h2 style="margin-top:14px">SNP position penalty</h2>
+        <div class="f"><label>SNP in a PAM G <b id="wvPam"></b></label>
+          <input type="range" id="wPam" min="0" max="3" step="0.1" value="3"></div>
+        <div class="f"><label>SNP in the PAM-proximal seed <b id="wvSeed"></b></label>
+          <input type="range" id="wSeed" min="0" max="3" step="0.1" value="1.5"></div>
+        <p class="note">These two are <b>multiplicative</b>, not additive: a SNP in a
+          PAM G does not make a guide slightly worse, it means the guide probably
+          does not cut at all, and no amount of efficiency makes up for that. The
+          score is multiplied by 0.05<sup>w/3</sup> for a PAM-G SNP and
+          0.5<sup>w/3</sup> for a seed SNP, so at the default weights a PAM-G hit
+          costs 95% of the score and a seed hit 29%. Set a weight to 0 to switch
+          that penalty off. The penalty follows the strain you picked above: a SNP
+          that is absent from your line is not counted.</p>
       </div>
 
       <div class="card">
@@ -204,6 +431,11 @@ code{font-family:var(--mono);font-size:12px;background:var(--chip);padding:1px 5
           your strain. He gives <b>no</b> numeric rule for distance from the splice
           boundary — that filter is yours to set.
         </p>
+      </div>
+
+      <div class="card" id="protCard" hidden>
+        <h2>Protein context</h2>
+        <div id="protBody"></div>
       </div>
     </div>
 
@@ -225,12 +457,63 @@ code{font-family:var(--mono);font-size:12px;background:var(--chip);padding:1px 5
       </p>
     </div>
   </div>
+
+  <div id="viewPrimers" hidden>
+    <div class="card" id="primerIntro"></div>
+    <div id="primerList"></div>
+  </div>
 </div>
 
 <script>
 const DATA = /*__DATA__*/;
+const PRIMERS = /*__PRIMERS__*/;
 const G = DATA.guides;
 const $ = s => document.querySelector(s);
+
+/* ---------- view tabs ---------- */
+function showView(which) {
+  const g = which === 'guides';
+  $('#viewGuides').hidden = !g;
+  $('#viewPrimers').hidden = g;
+  $('#tabGuides').classList.toggle('on', g);
+  $('#tabPrimers').classList.toggle('on', !g);
+  if (!g) renderPrimers();
+}
+$('#tabGuides').onclick = () => showView('guides');
+$('#tabPrimers').onclick = () => showView('primers');
+
+/* ---------- CHOPCHOP job freshness ----------
+   There is no reliable way to test the job from this page: the report is
+   usually opened over file://, and chopchop.cbu.uib.no sends no CORS header, so
+   a fetch cannot read the status -- an opaque response looks the same whether
+   the job is alive or 404. Rather than fake a check, go on the one thing that
+   is knowable locally (how old the job is) and hand over the exact command.   */
+const JOB_STALE_DAYS = 7;
+(function jobFreshness() {
+  // DATA.generated is when the report was built; job_refreshed, if
+  // present, is when refresh_job.py last re-pointed the links. The job's
+  // age is measured from whichever is later.
+  const gen = (DATA.job_refreshed || DATA.generated || '').slice(0, 10);
+  const t = Date.parse(gen);
+  if (!t) return;
+  const days = Math.floor((Date.now() - t) / 86400000);
+  let dismissed = false;
+  try { dismissed = localStorage.getItem('gr-jobwarn-' + DATA.job) === '1'; } catch (e) {}
+  if (days < JOB_STALE_DAYS || dismissed) return;
+  $('#jobAge').textContent =
+    `This job was submitted ${days} days ago (${gen}). `;
+  const file = `${DATA.gene}_${DATA.build}.html`;
+  $('#refreshCmd').textContent = `python refresh_job.py --check ${file}`;
+  $('#jobWarn').hidden = false;
+  $('#copyRefresh').onclick = () => {
+    copyText($('#refreshCmd').textContent, $('#copyRefresh'));
+  };
+  $('#jobDismiss').onclick = e => {
+    e.preventDefault();
+    try { localStorage.setItem('gr-jobwarn-' + DATA.job, '1'); } catch (err) {}
+    $('#jobWarn').hidden = true;
+  };
+})();
 
 /* ---------- header ---------- */
 $('#gene').textContent = DATA.gene;
@@ -260,10 +543,15 @@ const exOn = new Set(exons);
 const SYMSHORT = { asymmetric: 'asym', symmetric: 'sym', noncoding: 'UTR' };
 $('#fExons').innerHTML = exInfo.map(e => {
   const why = [];
-  if (e.first) why.push('exon 1 - avoid, alternative start codons downstream');
+  if (e.firstCoding) why.push('first coding exon - the protocol puts this last on its priority list, because a frameshift here can be bypassed by re-initiation at a downstream in-frame ATG');
+  else if (e.first) why.push('exon 1 (non-coding) - no ATG here');
   if (e.last) why.push('last exon - a frameshift here escapes NMD');
   if (!e.guides) why.push('no guide cuts in this exon');
   if (e.coding != null) why.push(`${e.coding} coding bp of ${e.len}`);
+  if (e.aa0) why.push(`encodes residues ${e.aa0}-${e.aa1}`);
+  if (e.atg && e.atg.length)
+    why.push(`in-frame ATG at ${e.atg.map(m => 'Met' + m).join(', ')} - a re-initiation route out of a frameshift upstream`);
+  if (e.domains && e.domains.length) why.push('domains: ' + e.domains.join(', '));
   return `<span class="chip${e.guides ? '' : ' dim'}" data-ex="${e.n}"
       aria-pressed="true" title="${why.join(' | ')}"><b>${e.n}</b>` +
     (e.symmetry ? `<i class="sm ${e.symmetry}">${SYMSHORT[e.symmetry] || ''}</i>` : '') +
@@ -302,6 +590,34 @@ const strainKey = () => $('#fStrain').value;
 const snpOf = g => { const k = strainKey();
   return num(k === 'any' ? g.snps : g['snp_' + k]); };
 const fmt = (v, d = 2) => v == null ? '—' : (+v).toFixed(d);
+const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/* ---------- SNP position ----------
+   Counted per strain where SNPfisher genotyped one. On 'any strain' we use the
+   raw count, which is the conservative reading: the variant exists in some lab
+   line, so it may exist in yours. For a named strain we use the PAM-G count that
+   is actually segregating in that line, because a SNP fixed in WIK tells you
+   nothing about a TL fish. SNPfisher reports no per-strain breakdown for the
+   seed, so the seed count falls back to "is any SNP in the seed at all", gated on
+   that strain carrying at least one SNP in the window. */
+const pamSnp = g => { const k = strainKey();
+  return num(k === 'any' ? g.snp_pam : g['snp_pam_' + k]) || 0; };
+const seedSnp = g => {
+  const n = num(g.snp_seed) || 0;
+  if (!n || strainKey() === 'any') return n;
+  return (snpOf(g) || 0) > 0 ? n : 0;
+};
+/* Multiplicative, because a PAM-G SNP does not degrade the guide, it removes it. */
+const snpGate = g => {
+  const wp = +$('#wPam').value, ws = +$('#wSeed').value;
+  let f = 1;
+  if (pamSnp(g) > 0 && wp > 0) f *= Math.pow(0.05, wp / 3);
+  if (seedSnp(g) > 0 && ws > 0) f *= Math.pow(0.5, ws / 3);
+  return f;
+};
+const KEY_DOMAIN = /tudor|tether|tead|transactivation|reductase|ww |homeo|kinase|dna binding|zinc finger/i;
+const domList = g => (g.domains || '').split(';').map(s => s.trim()).filter(Boolean);
 
 function pass(g) {
   if (num(g.efficiency) != null && num(g.efficiency) < +$('#fEff').value) return false;
@@ -317,6 +633,15 @@ function pass(g) {
   if (mm === 'strict' && (offPenalty(g) > 0 || (g.mm0 || 0) > 0)) return false;
   const sym = $('#fSym').value;
   if (sym !== 'any' && g.symmetry !== sym) return false;
+  const z = $('#fZone').value;
+  if (z === 'nopam' && pamSnp(g) > 0) return false;
+  if (z === 'noseed' && (pamSnp(g) > 0 || seedSnp(g) > 0)) return false;
+  const mc = +$('#fCons').value;
+  if (mc > 0 && num(g.cons) != null && num(g.cons) < mc) return false;
+  const at = $('#fAtg').value;
+  if (at !== 'any' && g.first_coding_exon !== '' && g.exon != null
+      && g.exon !== '' && +g.exon === +g.first_coding_exon) return false;
+  if (at === 'safe' && reinitLevel(g)) return false;
   if (g.exon !== '' && g.exon != null && exOn.size && !exOn.has(+g.exon)) return false;
   const q = $('#fTxt').value.trim().toUpperCase();
   if (q && !(g.target.includes(q) || String(g.rank) === q)) return false;
@@ -326,7 +651,9 @@ function pass(g) {
 function scored(rows) {
   const W = { eff: +$('#wEff').value, fs: +$('#wFs').value, pr: +$('#wPr').value,
               edge: +$('#wEdge').value, mm: +$('#wMm').value, snp: +$('#wSnp').value,
-              sc: +$('#wSc').value, asym: +$('#wAsym').value };
+              sc: +$('#wSc').value, asym: +$('#wAsym').value,
+              cons: +$('#wCons').value, dom: +$('#wDom').value,
+              atg: +$('#wAtg').value };
   const vals = k => rows.map(k).filter(v => v != null);
   const mk = k => { const v = vals(k); if (!v.length) return () => 0;
     const lo = Math.min(...v), hi = Math.max(...v);
@@ -335,23 +662,50 @@ function scored(rows) {
   const nPr = mk(g => num(g.precision)), nEd = mk(g => num(g.bp_to_splice));
   const nMm = mk(g => offPenalty(g)), nSn = mk(g => snpOf(g) ?? 0);
   const nSc = mk(g => num(g.selfcompl));
+  const nCo = mk(g => num(g.cons));
+  /* Re-initiation risk. Distance alone is almost no information: an in-frame
+     ATG turns up within 40 codons of roughly half of all cut sites by chance,
+     which is why the old distance-only rule flagged 85% of yap1's guides. What
+     decides whether re-initiation actually rescues anything is how much of the
+     protein the re-initiated product keeps. Proximity only modulates it. */
+  const atgRisk = g => {
+    const d = num(g.atg_dist), k = num(g.reinit_keeps);
+    if (d == null || k == null) return 0;
+    const retained  = Math.max(0, (k - 60) / 40);     // 60% kept -> 0, 100% -> 1
+    const proximity = Math.max(0, 1 - d / 150);
+    return Math.min(1, retained * proximity);
+  };
   const tot = Object.values(W).reduce((a, b) => a + b, 0) || 1;
   rows.forEach(g => {
-    g._score = (
+    const base = (
       W.eff * nEff(num(g.efficiency)) + W.fs * nFs(num(g.frameshift)) +
       W.pr * nPr(num(g.precision)) + W.edge * nEd(num(g.bp_to_splice)) +
       W.mm * (1 - nMm(offPenalty(g))) + W.snp * (1 - nSn(snpOf(g) ?? 0)) +
       W.sc * (1 - nSc(num(g.selfcompl))) +
-      W.asym * (g.symmetry === 'asymmetric' ? 1 : 0)
+      W.asym * (g.symmetry === 'asymmetric' ? 1 : 0) +
+      W.cons * nCo(num(g.cons)) +
+      W.dom * (domList(g).some(d => KEY_DOMAIN.test(d)) ? 1 : 0) +
+      W.atg * (1 - atgRisk(g))
     ) / tot;
+    g._gate = snpGate(g);
+    g._base = base;
+    g._score = base * g._gate;
   });
   return rows;
 }
 
 /* ---------- columns ---------- */
 const COLS = [
-  { k: '_score', t: 'Score', n: 1, r: g => `<span class="score">${fmt(g._score, 3)}</span>
-      <span class="bars"><i style="width:${(g._score * 100).toFixed(0)}%"></i></span>` },
+  { k: '_pin', t: '☆', r: g => `<button class="star ${isPinned(g.rank) ? 'on' : ''}"
+      data-pin="${g.rank}" title="${isPinned(g.rank) ? 'Remove from saved' : 'Save this guide and pin it to the top'}"
+      >${isPinned(g.rank) ? '★' : '☆'}</button>` },
+  { k: '_score', t: 'Score', n: 1, r: g => {
+      const gate = g._gate == null ? 1 : g._gate;
+      const note = gate < 0.999
+        ? `<span class="mini" title="A SNP sits in ${pamSnp(g) > 0 ? 'a PAM G' : 'the PAM-proximal seed'}, so the score is multiplied by ${gate.toFixed(3)} (it would be ${fmt(g._base, 3)} without that penalty).">×${gate.toFixed(2)}</span>`
+        : '';
+      return `<span class="score">${fmt(g._score, 3)}</span> ${note}
+      <span class="bars"><i style="width:${(g._score * 100).toFixed(0)}%"></i></span>`; } },
   { k: 'rank', t: 'CC rank', n: 1 },
   { k: 'exon', t: 'Exon', r: g => g.exon === '' ? '—'
       : `${g.exon}<span class="mini">/${g.exon_total}</span>` },
@@ -382,7 +736,35 @@ const COLS = [
       if (v == null) return '<span class="mini">not queried</span>';
       const extra = (strainKey() !== 'any' && tot > v)
         ? `<span class="mini" title="${tot} SNP(s) in this window in total; only ${v} segregating in the strain you picked."> /${tot}</span>` : '';
-      return `<span class="pill ${v ? 'bad' : 'good'}">${v}</span>${extra}`; } },
+      let zone = '';
+      if (pamSnp(g) > 0) zone = `<span class="zone critical" title="A SNP falls on one of the two Gs of the NGG PAM, which Cas9 reads directly (Anders 2014). Expect little or no cutting. If the change makes NAG you might keep roughly a fifth of the activity (Hsu 2013), which is still not a guide you want.">PAM</span>`;
+      else if (seedSnp(g) > 0) zone = `<span class="zone high" title="A SNP falls in the 10 nt nearest the PAM. Single mismatches there usually cut activity to well under a quarter (Hsu 2013; Doench 2016).">SEED</span>`;
+      else if (v > 0) zone = `<span class="zone low" title="The SNP(s) in this target sit in the PAM-distal half of the protospacer or on the N of NGG, where a single mismatch is usually tolerated.">distal</span>`;
+      return `<span class="pill ${v ? 'bad' : 'good'}">${v}</span>${extra}${zone}`; } },
+  { k: 'aa', t: 'Residue / domain', r: g => {
+      if (g.aa === '' || g.aa == null) return '<span class="mini">not coding</span>';
+      const first = (g.first_coding_exon !== '' && g.exon !== '' &&
+                     +g.exon === +g.first_coding_exon)
+        ? ` <span class="pill warn" title="This is the first coding exon. An early frameshift here can be bypassed by re-initiation at a downstream in-frame ATG, which is why the protocol prefers a later exon.">exon&nbsp;1</span>` : '';
+      const atgLvl = reinitLevel(g);
+      const atg = atgLvl
+        ? ` <span class="pill ${atgLvl === 'high' ? 'bad' : 'warn'}" title="Re-initiation escape route: the next in-frame ATG is ${g.atg_dist} codons downstream (Met${g.next_atg}), and a protein re-initiated there would still keep about ${g.reinit_keeps}% of the residues. That is the part that matters — a nearby ATG that only rescues a short C-terminal fragment is not flagged.">ATG+${g.atg_dist} · keeps ${g.reinit_keeps}%</span>` : '';
+      const doms = domList(g).map(d => {
+        const proj = /\(projected\)$/.test(d);
+        const lab = d.replace(/\s*\(projected\)$/, '');
+        const t = proj
+          ? `${lab} - projected from the human ortholog through the alignment, not annotated on the zebrafish protein`
+          : `${lab} - annotated directly on the zebrafish protein`;
+        return `<span class="dom ${KEY_DOMAIN.test(d) ? 'key' : ''} ${proj ? 'proj' : ''}" title="${esc(t)}">${esc(lab)}</span>`;
+      }).join('');
+      return `<b>${g.aa}</b><span class="mini">/${g.aa_total || '?'}</span>${first}${atg}
+        <div>${doms || '<span class="mini">no annotated domain</span>'}</div>`; } },
+  { k: 'cons', t: 'Cons', n: 1, r: g => {
+      const v = num(g.cons);
+      if (v == null) return '<span class="mini">—</span>';
+      const cls = v >= 70 ? '' : v >= 40 ? 'mid' : 'low';
+      return `<span title="${v}% identity and ${g.cons_sim}% BLOSUM-positive similarity to the human ortholog across the 11 residues centred on the cut site.">${v}%
+        <span class="cons"><i class="${cls}" style="width:${v}%"></i></span></span>`; } },
   { k: 'gc', t: 'GC%', n: 1 },
   { k: 'selfcompl', t: 'SelfC', n: 1 },
   { k: '_act', t: '', r: g => `<span class="act">
@@ -392,12 +774,817 @@ const COLS = [
     </span>` },
 ];
 
+/* ---------- saved ("pinned") guides ----------
+   Stored per gene and build, so two reports open side by side keep separate
+   lists, and a re-run of the pipeline that rewrites the HTML does not lose them.
+   Keyed on the CHOPCHOP rank, which is stable for a given job. */
+const PIN_KEY = `gr-pins-${DATA.gene}-${DATA.build}`;
+let pins = [];
+let stored = null;
+try { stored = localStorage.getItem(PIN_KEY); } catch (e) {}
+if (stored != null) {
+  try { pins = JSON.parse(stored); } catch (e) { pins = []; }
+} else {
+  /* Nothing saved in this browser yet, so start from whatever the pipeline was
+     told to pre-select (--preselect). Once the user touches a star, their own
+     list is stored and takes over: a later re-run never overwrites it. */
+  pins = (DATA.prePins || []).slice();
+}
+if (!Array.isArray(pins)) pins = [];
+pins = pins.map(Number).filter(r => G.some(g => +g.rank === r));
+const isPinned = r => pins.includes(+r);
+function savePins() {
+  try { localStorage.setItem(PIN_KEY, JSON.stringify(pins)); } catch (e) {}
+}
+function togglePin(r) {
+  r = +r;
+  const i = pins.indexOf(r);
+  if (i < 0) pins.push(r); else pins.splice(i, 1);
+  savePins();
+  render();
+}
+const pinnedGuides = () => pins.map(r => G.find(g => +g.rank === r)).filter(Boolean);
+const ccLink = g => `${DATA.jobUrl}details/${g.rank}`;
+
+function copyText(t, btn, label) {
+  const done = () => { if (!btn) return; const o = btn.textContent;
+    btn.textContent = label || '✓ copied'; setTimeout(() => btn.textContent = o, 1200); };
+  if (navigator.clipboard?.writeText) navigator.clipboard.writeText(t).then(done, () => fallback(t, done));
+  else fallback(t, done);
+  function fallback(text, cb) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.remove(); cb();
+  }
+}
+/* ============================ primers view ============================
+   Shows, per chosen guide, the ranked primer pairs the designer considered --
+   not just the one it used. The `#` column IS the rank: pair 1 is what
+   primer_design.py would order, pair 2 the next best, and so on, sorted by
+   dTm then Primer3 penalty. There is no separate "chosen" mark, because the
+   rank already says it.
+
+   Tick as many pairs per guide as you like. Everything ticked is drawn on that
+   locus's track and travels into every export, so ordering a backup pair is
+   just a second checkbox.
+
+   Selections persist per gene in localStorage, surviving a reload and a
+   regeneration of the report, like the starred guides on the first tab.      */
+const OH_F = 'TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG';   // Illumina forward overhang, 33 nt
+const OH_R = 'GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG';  // reverse, 34 nt
+const TRACK_MAX_DRAW = 6;
+const ROWS_VISIBLE = 8;   // rows shown before 'show all'
+const expanded = new Set();   // beyond this the stacked track stops being readable
+
+const PSEL_KEY = `gr-primerpick-${DATA.gene}-${DATA.build}`;
+let pSel = {};
+try { pSel = JSON.parse(localStorage.getItem(PSEL_KEY) || '{}') || {}; } catch (e) { pSel = {}; }
+function savePSel() {
+  try { localStorage.setItem(PSEL_KEY, JSON.stringify(pSel)); } catch (e) {}
+}
+/* Stored values are pair indices, which only mean anything if those pairs are
+   still present -- candidates.json may have been regenerated with a different
+   --max-candidates. Drop any that vanished; fall back to rank 1 if that empties
+   the set, so a locus is never silently left with nothing selected. */
+function selIdx(L) {
+  const have = new Set(L.pairs.map(p => p.i));
+  /* Stored picks are rank numbers, and a rank only means something for the
+     shortlist it was made on: after a re-design, rank 2 is a different pair of
+     oligos. primer_design.py ships a per-locus signature of the shortlist plus
+     its recommendation, kept beside the stored picks, so picks made against an
+     earlier design are dropped instead of silently masking the new
+     recommendation. Entries in the older bare-array format carry no signature,
+     so they are stale by definition. */
+  const stored = pSel[L.name];
+  let v = (stored && !Array.isArray(stored) && stored.sig === L.sel_sig
+           && Array.isArray(stored.sel)) ? stored.sel : [];
+  v = v.filter(i => have.has(i));
+  // Nothing stored (or nothing left after filtering): fall back to what
+  // primer_design.py recommended -- rank 1 plus its chosen backup -- rather
+  // than to rank 1 alone, so a fresh reader sees the full suggestion.
+  if (!v.length) {
+    v = (L.recommended || []).filter(i => have.has(i));
+    if (!v.length) v = L.pairs.length ? [L.pairs[0].i] : [];
+  }
+  return v.sort((a, b) => a - b);
+}
+function selPairs(L) {
+  const s = new Set(selIdx(L));
+  return L.pairs.filter(p => s.has(p.i));
+}
+
+const PAIR_COLS = [
+  ['', (p, L) => `<input type="checkbox" class="psel" data-locus="${L.name}"
+      data-pair="${p.i}"${selIdx(L).includes(p.i) ? ' checked' : ''}
+      aria-label="select pair ${p.i}">`],
+  ['Rank', p => p.i, 'num'],
+  ['Left primer coords', p => `${fmtPos(p.f_start)}-${fmtPos(p.f_end)}`],
+  ['Left primer', p => `<span class="seq">${p.fwd}</span>`],
+  ['Left Tm', p => p.tm_f.toFixed(2), 'num'],
+  ['Right primer coords', p => `${fmtPos(p.r_start)}-${fmtPos(p.r_end)}`],
+  ['Right primer', p => `<span class="seq">${p.rev}</span>`],
+  ['Right Tm', p => p.tm_r.toFixed(2), 'num'],
+  ['&Delta;Tm', p => p.dtm.toFixed(2), 'num'],
+  ['Product', p => p.size + ' bp', 'num'],
+  ['Cut from ends', p => `${p.cut_from_left}/${p.cut_from_right}`],
+  ['SNPs', p => snpBadge(p)],
+  ['Dimer &Delta;G', p => (p.hetero_dg == null ? '–' : p.hetero_dg.toFixed(1)), 'num'],
+  ['In-silico PCR', p => specBadge(p)],
+];
+
+/* Genome-wide specificity, from ispcr_scan.py via candidates.json. Three
+   states, and they are kept distinct on purpose: a clean result, a bad result,
+   and never measured. Collapsing "not checked" into "fine" is how a pair that
+   amplifies two loci ends up on an order sheet. */
+function specBadge(p) {
+  if (p.ispcr_off == null) return `<span class="pbadge" title="specificity not measured for this pair">not checked</span>`;
+  const why = (p.ispcr_verdict || '').replace(/"/g, '&quot;');
+  if (p.ispcr_off === 0) {
+    /* `verdict` says whether an alt-haplotype copy was seen and discounted.
+       The badge stays green -- an alt contig is the same locus written twice,
+       not a second band -- but the fact is on the tooltip rather than hidden,
+       because a reader who BLASTs these primers themselves will see that hit
+       and should not have to wonder whether we missed it. */
+    const alt = /alt-haplotype/.test(why);
+    return `<span class="pbadge ok" title="${why || 'exactly one predicted product'}">` +
+           `1 product${alt ? ' *' : ''}</span>`;
+  }
+  const hits = (p.ispcr_hits || []).slice(0, 3).join('; ');
+  return `<span class="pbadge bad" title="${why}${hits ? ' — ' + hits.replace(/"/g, '&quot;') : ''}">` +
+         `+${p.ispcr_off} off-target</span>`;
+}
+
+const fmtPos = n => n.toLocaleString('en-US');
+
+function snpBadge(p) {
+  const n = p.snp_fwd + p.snp_rev;
+  if (p.snp_3prime) return `<span class="pbadge bad">${n} (3′!)</span>`;
+  if (n) return `<span class="pbadge warn">${n}</span>`;
+  return '<span class="pbadge ok">0</span>';
+}
+
+function tierBadge(t) {
+  if (!t) return '';
+  if (t === 'strict') return '<span class="pbadge ok">strict</span>';
+  if (t.startsWith('UNVERIFIED') || t === 'FAILED')
+    return `<span class="pbadge bad">${t}</span>`;
+  return `<span class="pbadge warn">${t}</span>`;
+}
+
+/* A CHOPCHOP-style track. Every ticked pair gets its own lane, so two
+   candidates can be compared against the same guide and the same coordinates
+   instead of flicking between them. */
+function track(L, pairs) {
+  if (!pairs.length) {
+    return `<p class="mini" style="margin:8px 0 2px">Nothing ticked for this
+      locus — tick a row to draw it.</p>`;
+  }
+  const shown = pairs.slice(0, TRACK_MAX_DRAW);
+  const pad = 40;
+  const lo = Math.min(...shown.map(p => p.prod_start)) - pad;
+  const hi = Math.max(...shown.map(p => p.prod_end)) + pad;
+  const span = hi - lo;
+  const W = 1000, INSET = 52;
+  const laneTop = 36, laneH = 19;
+  const axisY = laneTop + shown.length * laneH + 10;
+  const H = axisY + 30;
+  const x = g => INSET + ((g - lo) / span) * (W - 2 * INSET);
+  const bits = [];
+
+  // guide + PAM, and the cut, drawn once across the whole stack
+  bits.push(`<rect x="${x(L.guide_start)}" y="14" width="${Math.max(2, x(L.guide_end) - x(L.guide_start))}"
+    height="12" rx="2" fill="var(--ink)"/>`);
+  bits.push(`<text x="${x((L.guide_start + L.guide_end) / 2)}" y="10" font-size="10"
+    fill="var(--muted)" text-anchor="middle">guide</text>`);
+  bits.push(`<line x1="${x(L.cut)}" y1="10" x2="${x(L.cut)}" y2="${axisY - 6}"
+    stroke="var(--bad)" stroke-width="1.5" stroke-dasharray="3 2"/>`);
+
+  shown.forEach((p, k) => {
+    const y = laneTop + k * laneH;
+    bits.push(`<rect x="${x(p.prod_start)}" y="${y + 5}" width="${x(p.prod_end) - x(p.prod_start)}"
+      height="6" rx="2" fill="var(--chip)"/>`);
+    const arrow = (a, b, dir) => {
+      const x1 = x(a), x2 = x(b), h = 11, yy = y + 2.5, tip = 6;
+      return dir > 0
+        ? `<path d="M${x1},${yy} H${Math.max(x1, x2 - tip)} L${x2},${yy + h / 2}
+            L${Math.max(x1, x2 - tip)},${yy + h} H${x1} Z" fill="var(--good)"/>`
+        : `<path d="M${x2},${yy} H${Math.min(x2, x1 + tip)} L${x1},${yy + h / 2}
+            L${Math.min(x2, x1 + tip)},${yy + h} H${x2} Z" fill="var(--good)"/>`;
+    };
+    bits.push(arrow(p.f_start, p.f_end, 1));
+    bits.push(arrow(p.r_start, p.r_end, -1));
+    bits.push(`<text x="4" y="${y + 12}" font-size="10" fill="var(--muted)"
+      font-family="var(--mono)">#${p.i}</text>`);
+    bits.push(`<text x="${W - 4}" y="${y + 12}" font-size="10" fill="var(--muted)"
+      text-anchor="end" font-family="var(--mono)">${p.size} bp</text>`);
+  });
+
+  // masked variants, on the axis
+  (L.snps || []).forEach(s => {
+    if (s < lo || s > hi) return;
+    bits.push(`<line x1="${x(s)}" y1="${axisY - 10}" x2="${x(s)}" y2="${axisY - 3}"
+      stroke="var(--warn)" stroke-width="1.5"/>`);
+  });
+
+  bits.push(`<line x1="${INSET}" y1="${axisY}" x2="${W - INSET}" y2="${axisY}"
+    stroke="var(--line)" stroke-width="1"/>`);
+  const ticks = 6;
+  for (let i = 0; i <= ticks; i++) {
+    const g = Math.round(lo + (span * i) / ticks);
+    const px = x(g);
+    bits.push(`<line x1="${px}" y1="${axisY - 4}" x2="${px}" y2="${axisY + 4}"
+      stroke="var(--muted)" stroke-width="1"/>`);
+    bits.push(`<text x="${px}" y="${axisY + 19}" font-size="10" fill="var(--muted)"
+      text-anchor="middle" font-family="var(--mono)">${fmtPos(g)}</text>`);
+  }
+
+  const more = pairs.length > TRACK_MAX_DRAW
+    ? `<p class="mini">Drawing the first ${TRACK_MAX_DRAW} of ${pairs.length}
+       ticked pairs; all ${pairs.length} are in the exports.</p>` : '';
+  return `<svg class="ptrack" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
+    style="height:${H}px" role="img" aria-label="primer track">${bits.join('')}</svg>${more}`;
+}
+
+/* Ticking a second pair is usually about having a backup if the first fails to
+   amplify. That only works if the backup is actually independent: Primer3
+   frequently returns several pairs that re-use one side, so "#1 and #2" can
+   share a primer and inherit the same failure. Say so rather than let it look
+   like insurance it is not.
+
+   Sites, not strings. Comparing `p.fwd === q.fwd` misses the common case: a
+   primer that is its neighbour extended or trimmed by a base. Different string,
+   same binding site, same SNP under it, same mispriming partner, same failure.
+   This is the rule primer_design.recommend_pairs() applies -- overlap of more
+   than half the shorter oligo counts as the same site -- so the page and the
+   designer can no longer disagree about what "independent" means. */
+function sameSite(a0, a1, b0, b1) {
+  const ov = Math.min(a1, b1) - Math.max(a0, b0) + 1;
+  return ov > 0.5 * Math.min(a1 - a0 + 1, b1 - b0 + 1);
+}
+function sharedNote(pairs, L) {
+  if (pairs.length < 2) return '';
+  const msgs = [];
+  for (let a = 0; a < pairs.length; a++) {
+    for (let b = a + 1; b < pairs.length; b++) {
+      const p = pairs[a], q = pairs[b], same = [];
+      if (sameSite(p.f_start, p.f_end, q.f_start, q.f_end)) same.push('forward');
+      if (sameSite(p.r_start, p.r_end, q.r_start, q.r_end)) same.push('reverse');
+      if (same.length) {
+        /* Per side, and worded per side: "share the forward primer" (the same
+           oligo) is a different fact from "sit on the same reverse site" (a
+           neighbour trimmed by a base). Collapsing them into one verb told the
+           reader something that was true of only one half of the sentence. */
+        const phrase = same.map(side => (side === 'forward' ? p.fwd === q.fwd
+                                                            : p.rev === q.rev)
+          ? `share the ${side} primer`
+          : `sit on the same ${side} site`);
+        msgs.push(`#${p.i} and #${q.i} ` + phrase.join(' and '));
+      }
+    }
+  }
+  if (!msgs.length) return '';
+  const extra = msgs.length > 1 ? ` (+${msgs.length - 1} more)` : '';
+  /* If the ticked set is exactly what the designer recommended, show its own
+     sentence: it explains whether a better backup exists at all, which the
+     page cannot work out from the shortlist alone. */
+  const sel = pairs.map(p => p.i).sort((x, y) => x - y).join(',');
+  const rec = (L && L.recommended || []).slice().sort((x, y) => x - y).join(',');
+  const why = (L && sel === rec && L.rec_independent === false && L.rec_why)
+    ? ` title="${L.rec_why.replace(/"/g, '&quot;')}"` : '';
+  return `<span class="warnnote"${why}>⚠ ${msgs[0]}${extra} — not an independent backup</span>`;
+}
+
+function trackHead(L, pairs) {
+  if (!pairs.length) return '';
+  const sizes = pairs.map(p => `#${p.i} · ${p.size} bp`).join('   ');
+  return `<div class="ptrackhead">${sizes}${sharedNote(pairs, L)}</div>`;
+}
+
+function redrawLocus(L) {
+  const sel = selPairs(L);
+  const host = document.getElementById('trk-' + L.name);
+  if (host) host.innerHTML = trackHead(L, sel) + track(L, sel);
+  const idx = new Set(sel.map(p => p.i));
+  document.querySelectorAll(`tr[data-locus="${L.name}"]`).forEach(tr => {
+    tr.classList.toggle('sel', idx.has(+tr.dataset.pair));
+  });
+  document.querySelectorAll(`input.psel[data-locus="${L.name}"]`).forEach(cb => {
+    cb.checked = idx.has(+cb.dataset.pair);
+  });
+  // A recommended or hand-ticked pair deeper than ROWS_VISIBLE must stay on
+  // screen, or the table would claim a selection it does not show.
+  const open = expanded.has(L.name);
+  document.querySelectorAll(`tr.xrow[data-locus="${L.name}"]`).forEach(tr => {
+    tr.hidden = !(open || idx.has(+tr.dataset.pair));
+  });
+  const mb = document.querySelector(`button[data-more="${L.name}"]`);
+  if (mb) mb.textContent = open
+    ? `Show top ${ROWS_VISIBLE} only`
+    : `Show all ${L.pairs.length} pairs`;
+  const cnt = document.getElementById('n-' + L.name);
+  if (cnt) cnt.textContent = `${sel.length} of ${L.pairs.length} selected`;
+  const bar = document.getElementById('cp-' + L.name);
+  if (bar) {
+    const first = sel[0];
+    bar.querySelector('[data-role="f"]').dataset.copy = first ? first.fwd : '';
+    bar.querySelector('[data-role="r"]').dataset.copy = first ? first.rev : '';
+  }
+}
+
+function updateCount() {
+  const loci = primerLoci();
+  const sel = loci.reduce((a, L) => a + selIdx(L).length, 0);
+  const cand = loci.reduce((a, L) => a + L.pairs.length, 0);
+  const el = document.getElementById('pCount');
+  if (el) el.textContent = `${loci.length} loci · ${cand} candidates · ${sel} selected`;
+}
+
+function toggleSel(name, i, on) {
+  const L = primerLoci().find(x => x.name === name);
+  if (!L) return;
+  const cur = new Set(selIdx(L));
+  if (on) cur.add(i); else cur.delete(i);
+  pSel[name] = { sig: L.sel_sig, sel: [...cur].sort((a, b) => a - b) };
+  savePSel();
+  redrawLocus(L);
+  updateCount();
+}
+
+/* ---------------- exports ---------------- */
+const CSV_COLS = [
+  'gene', 'rank', 'name', 'exon', 'chrom', 'cut', 'strand', 'tier',
+  'pair_rank', 'is_selected',
+  'fwd', 'rev', 'len_f', 'len_r', 'tm_f', 'tm_r', 'dtm', 'gc_f', 'gc_r',
+  'product_bp', 'cut_from_left', 'cut_from_right',
+  'f_start', 'f_end', 'r_start', 'r_end',
+  'snp_fwd', 'snp_rev', 'snp_3prime', 'hetero_dg', 'penalty',
+  'fwd_with_overhang', 'rev_with_overhang', 'len_f_oh', 'len_r_oh',
+  'shared_tm', 'specificity',
+];
+
+function csvRow(L, p) {
+  return {
+    gene: L.gene, rank: L.rank, name: L.name, exon: L.exon,
+    chrom: L.chrom, cut: L.cut, strand: L.strand, tier: L.tier,
+    pair_rank: p.i, is_selected: selIdx(L).includes(p.i) ? 1 : 0,
+    fwd: p.fwd, rev: p.rev, len_f: p.fwd.length, len_r: p.rev.length,
+    tm_f: p.tm_f, tm_r: p.tm_r, dtm: p.dtm, gc_f: p.gc_f, gc_r: p.gc_r,
+    product_bp: p.size, cut_from_left: p.cut_from_left,
+    cut_from_right: p.cut_from_right,
+    f_start: p.f_start, f_end: p.f_end, r_start: p.r_start, r_end: p.r_end,
+    snp_fwd: p.snp_fwd, snp_rev: p.snp_rev, snp_3prime: p.snp_3prime,
+    hetero_dg: p.hetero_dg == null ? '' : p.hetero_dg, penalty: p.penalty,
+    fwd_with_overhang: OH_F + p.fwd, rev_with_overhang: OH_R + p.rev,
+    len_f_oh: OH_F.length + p.fwd.length, len_r_oh: OH_R.length + p.rev.length,
+    shared_tm: PRIMERS.shared_tm,
+    // Say it in the file, not just on the screen: a CSV gets mailed around and
+    // separated from the caveat it was shown with.
+    specificity: 'NOT CHECKED - run blast_specificity.py or Primer-BLAST',
+  };
+}
+
+function toCSV(rows, cols) {
+  const esc = v => {
+    const s = v == null ? '' : String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  return [cols.join(',')]
+    .concat(rows.map(r => cols.map(c => esc(r[c])).join(',')))
+    .join('\n') + '\n';
+}
+
+function exportPrimerCSV(which) {
+  const rows = [];
+  primerLoci().forEach(L => {
+    (which === 'all' ? L.pairs : selPairs(L)).forEach(p => rows.push(csvRow(L, p)));
+  });
+  if (!rows.length) return;
+  download(`${DATA.gene}_${DATA.build}_primers_${which === 'all' ? 'all_candidates' : 'selected'}.csv`,
+           toCSV(rows, CSV_COLS), 'text/csv');
+}
+
+function exportOrderSheet(withOverhang) {
+  const rows = [];
+  primerLoci().forEach(L => {
+    const sel = selPairs(L);
+    sel.forEach(p => {
+      // Only disambiguate the name when more than one pair is ordered for this
+      // locus, so the common case keeps the short tube label.
+      const sfx = sel.length > 1 ? `_p${p.i}` : '';
+      rows.push({ Name: `${L.name}${sfx}_F`,
+                  Sequence: withOverhang ? OH_F + p.fwd : p.fwd,
+                  Scale: '25nm', Purification: 'STD' });
+      rows.push({ Name: `${L.name}${sfx}_R`,
+                  Sequence: withOverhang ? OH_R + p.rev : p.rev,
+                  Scale: '25nm', Purification: 'STD' });
+    });
+  });
+  if (!rows.length) return;
+  download(`${DATA.gene}_${DATA.build}_order_sheet${withOverhang ? '_overhang' : ''}.csv`,
+           toCSV(rows, ['Name', 'Sequence', 'Scale', 'Purification']), 'text/csv');
+}
+
+function primerLoci() {
+  if (!PRIMERS || !PRIMERS.loci) return [];
+  return PRIMERS.loci.filter(L => !L.gene || L.gene === DATA.gene);
+}
+
+/* ---------------- conditions panel + re-run builder ----------------
+   This page is a static file. It cannot run primer_design.py, and pretending
+   otherwise with a "Search" button that silently did nothing would be worse
+   than useless. What it can do is show exactly what the last search ran under
+   and assemble the command for a new one, so a re-run is a copy and a paste
+   rather than a reconstruction from memory.                                 */
+const RERUN_FIELDS = [
+  ['tm_mode', 'Shared Tm', 'select', ['scan', 'fixed']],
+  ['tm_chosen', 'Fixed Tm (°C)', 'num', 0.25],
+  ['tm_lo', 'Scan from (°C)', 'num', 0.25],
+  ['tm_hi', 'Scan to (°C)', 'num', 0.25],
+  ['tm_step', 'Scan step (°C)', 'num', 0.05],
+  ['max_product', 'Max product (bp)', 'num', 1],
+  ['min_product', 'Min product (bp)', 'num', 1],
+  ['min_flank', 'Min cut-to-end (bp)', 'num', 1],
+  ['flank_window', 'Fetch window (bp)', 'num', 10],
+  ['max_candidates', 'Candidates kept', 'num', 1],
+  ['mv', 'Monovalent (mM)', 'num', 1],
+  ['dv', 'Mg²⁺ (mM)', 'num', 0.1],
+  ['dntp', 'dNTP (mM)', 'num', 0.1],
+  ['dna', 'Primer (nM)', 'num', 10],
+  ['snpfisher', 'Mask SNPfisher variants', 'bool'],
+];
+
+function conditionsPanel() {
+  const P = PRIMERS.params;
+  if (!P) {
+    return `<p class="note">This report was built before run parameters were
+      recorded, so the conditions are unknown. Re-run
+      <code>primer_design.py</code> and regenerate to populate this panel.</p>`;
+  }
+  const scan = PRIMERS.tm_scan || [];
+  const best = scan.filter(r => r.tm === P.tm_chosen)[0];
+  // The Tm scan is optimised across every locus in the run, which is usually
+  // more genes than this report shows. Use the recorded total, not this page's
+  // locus count, or the fraction reads as nonsense (11/6).
+  const nloci = P.n_loci || primerLoci().length;
+
+  // Four tiles, because these are the numbers that define the search. Everything
+  // else is reference detail and goes in the disclosure below.
+  const tile = (v, k) => `<div class="stat"><b>${v}</b><span>${k}</span></div>`;
+  const tiles = [
+    tile(`${P.tm_chosen} °C`, P.tm_mode === 'scan'
+      ? `shared Tm · ${best ? `${best.n_ok}/${nloci} loci` : 'scanned'}` : 'shared Tm (fixed)'),
+    tile(`${P.min_product}–${P.max_product} bp`, 'product size'),
+    tile(`≥ ${P.min_flank} bp`, 'cut to product end'),
+    tile(`≤ ${P.diff_tm_strict} °C`, 'left/right ΔTm'),
+  ].join('');
+
+  const row = (k, v) => `<div><dt>${k}</dt><dd>${v}</dd></div>`;
+  const full = [
+    row('Tm search', P.tm_mode === 'scan'
+      ? `${P.tm_lo}–${P.tm_hi} °C, ${P.tm_step} steps` : 'fixed'),
+    row('Primer length', `${P.primer_size[0]}–${P.primer_size[2]} nt (opt ${P.primer_size[1]})`),
+    row('Shortlist order', P.sort === 'penalty'
+      ? 'ΔTm, then Primer3 penalty'
+      : 'ΔTm (0.1 °C buckets) → variants under a primer → oligo length → ' +
+        'product length → Primer3 penalty'),
+    row('Primer GC', `${P.gc_range[0]}–${P.gc_range[1]}%`),
+    row('Variant masking', `Ensembl${P.snpfisher ? ' + SNPfisher' : ' only'}`),
+    row('Variant in 3′ end', `never, last ${P.three_prime_nt} nt`),
+    row('Fetch window', `±${P.flank_window} bp`),
+    row('Monovalent / Mg²⁺', `${P.mv} / ${P.dv} mM`),
+    row('dNTP / primer', `${P.dntp} mM / ${P.dna} nM`),
+    row('Candidates kept', `${P.max_candidates} per locus`),
+    row('Specificity', P.specificity
+      ? `in-silico PCR on ${P.specificity.genome}, 3′ seed ` +
+        `${P.specificity.min_perfect} nt exact, ≤ ${P.specificity.max_mismatch} ` +
+        `mismatches 5′ of it, products ≤ ${P.specificity.max_product} bp ` +
+        `(${P.specificity.generated})`
+      : '<b>not checked</b> — see specificity_todo.txt'),
+    row('Engine', P.primer3),
+    row('Run', P.generated),
+  ].join('');
+
+  return `<div class="statrow">${tiles}</div>
+    <details class="pd"><summary>All search conditions</summary>
+      <div class="body">
+        <dl class="deflist">${full}</dl>
+        <p class="ladder">Relaxation ladder:
+          ${P.tiers.map(t => `<code>${t.name}</code>`).join(' → ')} —
+          each locus stops at the first rung that yields a pair, shown as a badge
+          on that locus.</p>
+      </div>
+    </details>`;
+}
+
+function rerunPanel() {
+  const P = PRIMERS.params;
+  if (!P) return '';
+  const f = RERUN_FIELDS.map(([k, label, kind, extra]) => {
+    if (kind === 'bool') {
+      return `<label class="rr"><input type="checkbox" id="rr_${k}"
+        ${P[k] ? 'checked' : ''}> ${label}</label>`;
+    }
+    if (kind === 'select') {
+      return `<label class="rr">${label}
+        <select id="rr_${k}">${extra.map(o =>
+          `<option${P[k] === o ? ' selected' : ''}>${o}</option>`).join('')}</select></label>`;
+    }
+    return `<label class="rr">${label}
+      <input type="number" id="rr_${k}" step="${extra}" value="${P[k]}"></label>`;
+  }).join('');
+  return `
+    <details class="pd rerun"><summary>Re-run the search with different settings</summary>
+      <div class="body">
+        <p class="hint">This page is a static file and cannot run the designer.
+          Adjust anything below, then run the command in <code>crispr_tools/</code>
+          and regenerate the report.</p>
+        <div class="rrgrid">${f}</div>
+        <div class="cmd"><code id="rrCmd"></code></div>
+        <div class="pbtns">
+          <button class="primary" id="rrCopy">Copy command</button>
+          <button id="rrReset">Reset</button>
+        </div>
+      </div>
+    </details>`;
+}
+
+function buildCmd() {
+  const P = PRIMERS.params;
+  const v = k => {
+    const el = document.getElementById('rr_' + k);
+    if (!el) return P[k];
+    return el.type === 'checkbox' ? el.checked
+         : el.tagName === 'SELECT' ? el.value
+         : (el.value === '' ? P[k] : Number(el.value));
+  };
+  const parts = ['python primer_design.py'];
+  P.sources.forEach(s => parts.push(`  --from ${s}`));
+  if (P.build && P.build !== 'danRer11') parts.push(`  --build ${P.build}`);
+  if (v('tm_mode') === 'fixed') {
+    parts.push(`  --tm ${v('tm_chosen')}`);
+  } else {
+    if (v('tm_lo') !== P.tm_lo) parts.push(`  --tm-lo ${v('tm_lo')}`);
+    if (v('tm_hi') !== P.tm_hi) parts.push(`  --tm-hi ${v('tm_hi')}`);
+    if (v('tm_step') !== P.tm_step) parts.push(`  --tm-step ${v('tm_step')}`);
+  }
+  const num = [['max_product', '--max-product'], ['min_product', '--min-product'],
+               ['min_flank', '--min-flank'], ['flank_window', '--flank-window'],
+               ['max_candidates', '--max-candidates'], ['mv', '--mv'],
+               ['dv', '--dv'], ['dntp', '--dntp'], ['dna', '--dna']];
+  num.forEach(([k, flag]) => { if (v(k) !== P[k]) parts.push(`  ${flag} ${v(k)}`); });
+  if (!v('snpfisher')) parts.push('  --no-snpfisher');
+  parts.push(`  -o ${P.out || 'primers_out'}`);
+  return parts.join(' \\\n');
+}
+
+function wireRerun() {
+  if (!PRIMERS.params) return;
+  const upd = () => { const el = $('#rrCmd'); if (el) el.textContent = buildCmd(); };
+  RERUN_FIELDS.forEach(([k]) => {
+    const el = document.getElementById('rr_' + k);
+    if (el) el.oninput = el.onchange = upd;
+  });
+  upd();
+  $('#rrCopy').onclick = () => copyText(buildCmd(), $('#rrCopy'));
+  $('#rrReset').onclick = () => {
+    RERUN_FIELDS.forEach(([k, , kind]) => {
+      const el = document.getElementById('rr_' + k);
+      if (!el) return;
+      if (kind === 'bool') el.checked = !!PRIMERS.params[k];
+      else el.value = PRIMERS.params[k];
+    });
+    upd();
+  };
+}
+
+function renderPrimers() {
+  const host = $('#primerList'), intro = $('#primerIntro');
+  if (!primerLoci().length) {
+    intro.innerHTML = `<h2>Primers</h2><p class="note">
+      No primer data was injected into this report. Run
+      <code>primer_design.py</code> to produce
+      <code>primers_out/candidates.json</code>, then regenerate the report.
+      This panel deliberately says nothing rather than showing an empty table,
+      which would read as "no primers are possible".</p>`;
+    host.innerHTML = '';
+    return;
+  }
+  const mine = primerLoci();
+  if (host.dataset.done === DATA.gene) return;   // render once
+
+  intro.className = 'pcard';
+  intro.innerHTML = `
+    <div class="phead">
+      <h2>Genotyping primers</h2>
+      <span class="sub" id="pCount"></span>
+      <span class="sp"></span>
+      <button id="expAll">All candidates (CSV)</button>
+      <button id="expOrder">Order sheet</button>
+      <label class="ohl"><input type="checkbox" id="ohToggle"> +overhangs</label>
+      <button class="primary" id="expSel">Export selected</button>
+    </div>
+    ${conditionsPanel()}
+    <div class="pbtns"><button id="pReset">Reset to rank 1</button></div>
+    ${rerunPanel()}
+    <div class="plegend" style="margin-top:10px">
+      <span><i style="background:var(--ink)"></i>guide + PAM</span>
+      <span><i style="background:var(--good)"></i>primer</span>
+      <span><i style="background:var(--bad)"></i>cut site</span>
+      <span><i style="background:var(--warn)"></i>masked variant</span>
+      <span><i style="background:var(--chip)"></i>amplicon</span>
+      <span>in-silico PCR: <b>1 product *</b> = one product, plus a copy on an
+        alt-haplotype contig (the same locus written twice in the assembly, not
+        a second band)</span>
+      <span class="sp" style="margin-left:auto">Rank 1 = the designer’s pick
+        (ΔTm to 0.1 °C, then no variant under a primer, then oligo length, then
+        product length, then Primer3). Tick any number of pairs per guide.</span>
+    </div>`;
+
+  host.innerHTML = mine.map(L => {
+    if (!L.pairs.length) {
+      return `<div class="plocus"><h3>${L.name} ${tierBadge(L.tier)}</h3>
+        <p class="note">No pair at any tier. ${L.tier_why || ''}</p></div>`;
+    }
+    const pam = L.target.slice(-3), proto = L.target.slice(0, -3);
+    const rows = L.pairs.map((p, n) =>
+      `<tr data-locus="${L.name}" data-pair="${p.i}"${n >= ROWS_VISIBLE ? ' class="xrow"' : ''}>` +
+      PAIR_COLS.map(c => `<td class="${c[2] || ''}">${c[1](p, L)}</td>`).join('') + '</tr>').join('');
+    return `<div class="plocus">
+      <h3>${L.gene} rank ${L.rank} ${tierBadge(L.tier)}
+        <span class="mini">exon ${L.exon || '?'} · ${L.chrom}:${fmtPos(L.cut)}
+        (${L.strand})</span>
+        <span class="mini sp" id="n-${L.name}"></span></h3>
+      <div class="seqline">${proto}<span class="pam">${pam}</span></div>
+      <div id="trk-${L.name}"></div>
+      <table class="ptbl"><thead><tr>${
+        PAIR_COLS.map(c => `<th class="${c[2] || ''}">${c[0]}</th>`).join('')}</tr></thead>
+        <tbody>${rows}</tbody></table>
+      ${L.pairs.length > ROWS_VISIBLE
+        ? `<div class="morerow"><button data-more="${L.name}"></button></div>` : ''}
+      <div class="btnrow" id="cp-${L.name}" style="margin-top:9px">
+        <button data-role="f" data-copy="">Copy first selected F</button>
+        <button data-role="r" data-copy="">Copy first selected R</button>
+        <button data-pfasta="${L.name}">Copy FASTA (all pairs)</button>
+      </div>
+    </div>`;
+  }).join('');
+  host.dataset.done = DATA.gene;
+
+  mine.forEach(redrawLocus);
+  wireRerun();
+
+  // the checkbox is the control; clicking anywhere else in the row toggles it
+  // too, because a 13 px target is a nuisance
+  host.querySelectorAll('input.psel').forEach(cb => {
+    cb.onclick = e => {
+      e.stopPropagation();
+      toggleSel(cb.dataset.locus, +cb.dataset.pair, cb.checked);
+    };
+  });
+  host.querySelectorAll('tr[data-locus]').forEach(tr => {
+    tr.onclick = () => {
+      const cb = tr.querySelector('input.psel');
+      if (cb) toggleSel(tr.dataset.locus, +tr.dataset.pair, !cb.checked);
+    };
+  });
+  host.querySelectorAll('[data-more]').forEach(b => {
+    b.onclick = e => {
+      e.stopPropagation();
+      const n = b.dataset.more;
+      if (expanded.has(n)) expanded.delete(n); else expanded.add(n);
+      redrawLocus(mine.find(x => x.name === n));
+    };
+  });
+  host.querySelectorAll('[data-pfasta]').forEach(b => {
+    b.onclick = e => {
+      e.stopPropagation();
+      const L = mine.find(x => x.name === b.dataset.pfasta);
+      const cur = new Set(selIdx(L));
+      const txt = L.pairs.map(p =>
+        `>${L.name}_pair${p.i}_F${cur.has(p.i) ? '_SELECTED' : ''}\n${p.fwd}\n` +
+        `>${L.name}_pair${p.i}_R${cur.has(p.i) ? '_SELECTED' : ''}\n${p.rev}`).join('\n');
+      copyText(txt, b);
+    };
+  });
+  host.querySelectorAll('[data-copy]').forEach(b => {
+    b.onclick = e => { e.stopPropagation(); copyText(b.dataset.copy, b); };
+  });
+
+  $('#expSel').onclick = () => exportPrimerCSV('selected');
+  $('#expAll').onclick = () => exportPrimerCSV('all');
+  // one button plus a modifier, rather than two near-identical buttons
+  $('#expOrder').onclick = () => exportOrderSheet($('#ohToggle').checked);
+  $('#pReset').onclick = () => {
+    pSel = {}; savePSel(); mine.forEach(redrawLocus); updateCount();
+  };
+  updateCount();
+}
+
+function download(name, text, type) {
+  const b = new Blob([text], { type: type || 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+/* Does this cut have a genuine re-initiation escape route?
+   `atg_dist` on its own is near-useless as a flag: an in-frame ATG appears
+   within 40 codons downstream of about half of all cut sites just by chance
+   (it fired on 123/240 and 205/241 guides on two test genes). The question that
+   matters is whether a product re-initiated at that ATG would still be most of
+   the protein. Returns 'high', 'low', or null for "not worth flagging". */
+function reinitLevel(g) {
+  const d = num(g.atg_dist), k = num(g.reinit_keeps);
+  if (d == null || k == null || d > 40) return null;
+  if (k >= 85) return 'high';
+  if (k >= 70) return 'low';
+  return null;
+}
+
+function renderSaved() {
+  const sel = pinnedGuides();
+  $('#savedN').textContent = sel.length ? `${sel.length} saved` : '';
+  $('#savedEmpty').hidden = sel.length > 0;
+  // Keep the row visible when there is a pipeline selection to restore, so
+  // "Clear" is never a one-way door.
+  $('#savedBtns').hidden = sel.length === 0 && !(DATA.prePins || []).length;
+  for (const id of ['svPrimerCmd', 'svLinks', 'svOligos', 'svIdt', 'svCsv', 'svTxt', 'svClear'])
+    $('#' + id).disabled = sel.length === 0;
+  // The saved guides themselves are not listed here: they are already pinned to
+  // the top of the main table, under the SAVED heading. This card is only the
+  // count and the bulk-export actions.
+}
+/* The one manual step in the workflow is carrying the starred ranks over to
+   primer_design.py. The report knows both halves -- which guides are starred,
+   and where this gene's CSV lives -- so it writes the command out rather than
+   leaving it to be retyped off the screen. It still has to be run in a
+   terminal: this page is a static file and cannot execute anything. */
+$('#svPrimerCmd').onclick = e => {
+  const ranks = pinnedGuides().map(g => g.rank).join(',');
+  if (!ranks) { copyText('(star some guides first)', e.target, 'none starred'); return; }
+  const csv = DATA.csvPath || `out/${DATA.gene}_${DATA.build}.csv`;
+  copyText(`python primer_design.py --from ${csv}:${ranks} -o primers_out`, e.target);
+};
+$('#svLinks').onclick = e =>
+  copyText(pinnedGuides().map(ccLink).join('\n'), e.target);
+$('#svOligos').onclick = e =>
+  copyText(pinnedGuides().map(g => g.proto).join('\n'), e.target);
+$('#svIdt').onclick = e =>
+  // IDT "check your own design" wants 20 nt without the PAM, one FASTA record each
+  copyText(pinnedGuides().map(g => `>${DATA.gene}_${g.rank}\n${g.proto}`).join('\n'), e.target);
+$('#svTxt').onclick = () => download(
+  `${DATA.gene}_${DATA.build}_saved_links.txt`,
+  pinnedGuides().map(g =>
+    `rank ${g.rank}\t${g.target}\texon ${g.exon ?? ''}\t${ccLink(g)}`).join('\n') + '\n');
+$('#svCsv').onclick = () => exportCsv(pinnedGuides(), 'saved');
+$('#svClear').onclick = () => {
+  if (!pins.length || !confirm(`Remove all ${pins.length} saved guides?`)) return;
+  pins = []; savePins(); render();
+};
+if ((DATA.prePins || []).length) {
+  const rb = $('#svRestore');
+  rb.hidden = false;
+  rb.title = 'Go back to the guides the pipeline was told to pre-select: '
+    + DATA.prePins.join(', ');
+  rb.onclick = () => { pins = DATA.prePins.slice(); savePins(); render(); };
+}
+
+/* ---------- protein context card ---------- */
+(function protCard() {
+  const P = DATA.protein;
+  if (!P) return;
+  const atg = DATA.altAtg || [];
+  const dom = (P.domains || []).map(d =>
+    `<tr><td class="num">${d.start}–${d.end}</td><td>${esc(d.label)}</td>
+      <td class="mini">${d.proj ? 'projected' : 'zebrafish'}</td></tr>`).join('');
+  const rows = [];
+  rows.push(`<tr><td>zebrafish protein</td><td>${P.zf_acc}, ${P.zf_len} aa${P.zf_reviewed ? '' : ' (unreviewed)'}</td></tr>`);
+  if (P.hs_acc)
+    rows.push(`<tr><td>human ortholog</td><td>${P.hs_acc}, ${P.hs_len} aa</td></tr>`,
+      `<tr><td>identity / similarity</td><td>${P.ident_pct}% / ${P.simil_pct}% over ${P.aligned} aligned residues</td></tr>`);
+  rows.push(`<tr><td>in-frame ATG codons</td><td>${atg.length
+    ? `${atg.length} downstream of the initiator, first at Met${atg[0]}`
+    : 'none downstream of the initiator'}</td></tr>`);
+  $('#protBody').innerHTML = `<table class="inner">${rows.join('')}</table>
+    <h3 style="margin:10px 0 4px">Domain spans (zebrafish residue numbers)</h3>
+    <table class="inner">${dom || '<tr><td class="mini">none</td></tr>'}</table>
+    <p class="note">Spans marked <i>zebrafish</i> are annotated on the zebrafish
+      entry itself. Spans marked <i>projected</i> were carried over from the human
+      entry through a BLOSUM62 global alignment, so their edges are only as good
+      as that alignment. Conservation per guide is the identity in an 11-residue
+      window centred on the cut site.</p>
+    ${(P.notes || []).map(n => `<p class="note" style="color:var(--warn)">${esc(n)}</p>`).join('')}`;
+  $('#protCard').hidden = false;
+})();
+
 let sortK = '_score', sortDir = -1;
 $('#thead').innerHTML = COLS.map(c =>
   `<th data-k="${c.k}">${c.t} <span class="ar"></span></th>`).join('');
 $('#thead').onclick = ev => {
   const th = ev.target.closest('th'); if (!th) return;
-  const k = th.dataset.k; if (k === '_act') return;
+  const k = th.dataset.k; if (k === '_act' || k === '_pin') return;
   if (sortK === k) sortDir = -sortDir; else { sortK = k; sortDir = -1; }
   render();
 };
@@ -409,11 +1596,18 @@ function render() {
       $('#' + el).value === '10' ? '+' : '');
   for (const [v, w] of [['wvEff', 'wEff'], ['wvFs', 'wFs'], ['wvPr', 'wPr'],
       ['wvEdge', 'wEdge'], ['wvMm', 'wMm'], ['wvSnp', 'wSnp'], ['wvSc', 'wSc'],
-      ['wvAsym', 'wAsym']])
+      ['wvAsym', 'wAsym'], ['wvCons', 'wCons'], ['wvDom', 'wDom'],
+      ['wvAtg', 'wAtg'], ['wvPam', 'wPam'], ['wvSeed', 'wSeed']])
     $('#' + v).textContent = (+$('#' + w).value).toFixed(1);
+  $('#vCons').textContent = +$('#fCons').value ? $('#fCons').value + '%' : 'off';
 
   let rows = G.filter(pass);
-  rows = scored(rows);
+  /* Saved guides are scored alongside the filtered set so their Score column and
+     the saved-CSV export stay meaningful even when a filter would hide them. The
+     normalisation still comes from the rows on screen, which is what the weights
+     panel promises. */
+  const pinned = pinnedGuides();
+  scored(rows.concat(pinned.filter(g => !rows.includes(g))));
   const key = g => sortK === '_off' ? offPenalty(g)
     : sortK === '_score' ? g._score
     : (typeof g[sortK] === 'string' && isNaN(+g[sortK])) ? g[sortK] : (num(g[sortK]) ?? -1e9);
@@ -435,10 +1629,23 @@ function render() {
     ` · SNP-free${strainKey() === 'any' ? '' : ' in ' + strainKey().toUpperCase()}:${pct(snpOk, rows.length)}` +
     ` · exons shown: <b>${[...exOn].sort((a, b) => a - b).join(', ') || 'none'}</b>`;
 
-  $('#tbody').innerHTML = rows.map(g => `<tr data-r="${g.rank}">` +
+  const tr = g => `<tr data-r="${g.rank}" class="${isPinned(g.rank) ? 'pinned' : ''}">` +
     COLS.map(c => `<td class="${c.n ? 'num' : ''}">${c.r ? c.r(g) : (g[c.k] ?? '—')}</td>`)
-      .join('') + '</tr>').join('');
-  $('#empty').hidden = rows.length > 0;
+      .join('') + '</tr>';
+  const sep = txt => `<tr class="sep"><td colspan="${COLS.length}">${txt}</td></tr>`;
+  const rest = rows.filter(g => !isPinned(g.rank));
+  let html = '';
+  if (pinned.length) {
+    const hidden = pinned.filter(g => !rows.includes(g)).length;
+    html += sep(`Saved &mdash; ${pinned.length} guide${pinned.length > 1 ? 's' : ''}`
+      + (hidden ? ` (${hidden} of them would be hidden by the current filters)` : ''))
+      + pinned.map(tr).join('')
+      + sep(`All guides matching the filters &mdash; ${rest.length}`);
+  }
+  html += rest.map(tr).join('');
+  $('#tbody').innerHTML = html;
+  $('#empty').hidden = rows.length > 0 || pinned.length > 0;
+  renderSaved();
   window._rows = rows;
 }
 
@@ -447,6 +1654,7 @@ $('#tbody').onclick = ev => {
   const btn = ev.target.closest('button');
   if (btn) {
     ev.stopPropagation();
+    if (btn.dataset.pin) { togglePin(btn.dataset.pin); return; }
     if (btn.dataset.cc) window.open(`${DATA.jobUrl}details/${btn.dataset.cc}`, '_blank', 'noopener');
     else if (btn.dataset.snp) snpQuery(btn.dataset.snp);
     else if (btn.dataset.copy) { navigator.clipboard?.writeText(btn.dataset.copy);
@@ -464,14 +1672,41 @@ $('#tbody').onclick = ev => {
         <td>${p.tm_f} / ${p.tm_r}</td><td>${p.size} bp</td></tr>`).join('') + '</table>'
     : '<p class="mini">No primers returned for this guide.</p>';
   const snp = (g.snp_detail || []).length ? `<table class="inner">
-      <tr><th>pos</th><th>ref→mut</th><th>FLI</th><th>TL</th><th>WIK</th></tr>` +
+      <tr><th>pos</th><th>where in the 23-mer</th><th>ref→mut</th><th>FLI</th><th>TL</th><th>WIK</th></tr>` +
       g.snp_detail.map(s => { const hot = k => (parseFloat(s[k]) > 0)
           ? ' style="color:var(--bad);font-weight:600"' : '';
-        return `<tr><td>${s.Pos}</td><td>${s.Ref}→${s.Mut}</td>
+        const sev = s.zone_sev || '';
+        const zn = s.where
+          ? `${esc(s.where)} <span class="zone ${sev}">${sev}</span>` : '<span class="mini">outside the window</span>';
+        return `<tr><td>${s.Pos}</td><td>${zn}</td><td>${s.Ref}→${s.Mut}</td>
         <td${hot('FLI_FQ')}>${s.FLI_FQ}</td><td${hot('TL_FQ')}>${s.TL_FQ}</td>
         <td${hot('WIK_FQ')}>${s.WIK_FQ}</td></tr>`; }).join('') +
-      '</table><p class="mini">Allele frequency per strain. If your strain shows &gt;0, pick another guide.</p>'
+      `</table><p class="mini">Allele frequency per strain, and where the variant sits
+        in the target. A variant on either G of the NGG PAM is the one that really
+        matters: Cas9 reads those two bases directly, so expect little or no cutting.
+        A variant in the 10 nt nearest the PAM (the seed) usually costs most of the
+        activity. One in the PAM-distal 10 nt, or on the N of NGG, is normally
+        tolerated. If your strain shows &gt;0 for a PAM or seed variant, pick
+        another guide.</p>`
     : `<p class="mini">${g.snps === 0 ? 'No SNPs in this 23-mer.' : 'Not queried — press SNP.'}</p>`;
+  const P = DATA.protein;
+  const prot = (g.aa === '' || g.aa == null)
+    ? `<p class="mini">The cut site is not inside coding sequence${g.region && g.region !== 'exon' ? ` (${g.region})` : ''}, so there is no residue to report.</p>`
+    : `<table class="inner">
+      <tr><td>residue hit</td><td>${g.aa} of ${g.aa_total || '?'}</td></tr>
+      <tr><td>domains at this residue</td><td>${domList(g).length ? domList(g).map(esc).join('<br>') : '<span class="mini">none annotated</span>'}</td></tr>
+      <tr><td>conservation to human</td><td>${num(g.cons) == null ? '—'
+        : `${g.cons}% identity, ${g.cons_sim}% similar, in an 11-residue window`}</td></tr>
+      <tr><td>next in-frame ATG</td><td>${g.next_atg === '' || g.next_atg == null
+        ? '<span class="mini">none downstream</span>'
+        : `Met${g.next_atg}, ${g.atg_dist} codons on. Re-initiating there would keep about ${g.reinit_keeps}% of the protein.`}</td></tr>
+      ${g.first_coding_exon !== '' && g.exon !== '' && +g.exon === +g.first_coding_exon
+        ? '<tr><td>note</td><td>This is the first coding exon, the one the protocol puts last on its priority list.</td></tr>' : ''}
+      </table>`
+      + (g.domain_flag ? `<p class="mini"><b>Why this domain matters:</b> ${esc(g.domain_flag)}</p>` : '')
+      + (P && P.hs_acc ? `<p class="mini">Conservation is against human ${P.hs_acc}
+          (${P.ident_pct}% identity overall). Domains marked projected were mapped
+          from the human entry through that alignment.</p>` : '');
   const row = document.createElement('tr');
   row.className = 'detail';
   row.innerHTML = `<td colspan="${COLS.length}"><div class="dgrid">
@@ -488,6 +1723,7 @@ $('#tbody').onclick = ev => {
       <tr><td>to splice edge</td><td>${g.bp_to_splice === '' ? '—' : g.bp_to_splice + ' bp'}</td></tr>
       <tr><td>in CDS</td><td>${g.in_cds || '—'}</td></tr>
       <tr><td>Zv9 window</td><td class="seq">${g.zv9 || '—'}</td></tr></table></div>
+    <div><h3>Protein context</h3>${prot}</div>
     <div><h3>SNPfisher</h3>${snp}</div>
   </div></td>`;
   tr.after(row);
@@ -533,27 +1769,29 @@ function snpQuery(win) {
 }
 
 /* ---------- export ---------- */
-$('#export').onclick = () => {
+function exportCsv(rows, tag) {
   const keys = ['rank', '_score', 'exon', 'exon_total', 'symmetry', 'bp_to_splice',
     'target', 'proto', 'pam', 'chrom', 'start', 'strand', 'cut', 'efficiency',
     'frameshift', 'precision', 'mh_del', 'gc', 'selfcompl', 'mm0', 'mm1', 'mm2',
-    'mm3', 'zv9', 'snps'];
-  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const lines = [keys.join(',')].concat((window._rows || []).map(g =>
-    keys.map(k => esc(k === '_score' ? (g._score ?? '').toFixed?.(4) ?? '' : g[k])).join(',')));
-  const b = new Blob([lines.join('\n')], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(b);
-  a.download = `${DATA.gene}_${DATA.build}_filtered.csv`;
-  a.click();
-};
+    'mm3', 'zv9', 'snps', 'snp_pam', 'snp_seed', 'snp_worst', 'aa', 'aa_total',
+    'domains', 'cons', 'cons_sim', 'next_atg', 'atg_dist', 'reinit_keeps',
+    'cc_url'];
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const cell = (g, k) => k === '_score' ? ((g._score ?? '').toFixed?.(4) ?? '')
+    : k === 'cc_url' ? ccLink(g) : g[k];
+  const lines = [keys.join(',')].concat((rows || []).map(g =>
+    keys.map(k => q(cell(g, k))).join(',')));
+  download(`${DATA.gene}_${DATA.build}_${tag}.csv`, lines.join('\n'), 'text/csv');
+}
+$('#export').onclick = () => exportCsv(window._rows || [], 'filtered');
 
 $('#reset').onclick = () => {
-  const d = { fEff: 0, fFs: 0, fEdge: 0, fSnp: 10, fSc: 10, wEff: 1, wFs: 1.5, wPr: .3,
-    wEdge: .3, wMm: 1, wSnp: .8, wSc: .2, wAsym: .5 };
+  const d = { fEff: 0, fFs: 0, fEdge: 0, fSnp: 10, fSc: 10, fCons: 0,
+    wEff: 1, wFs: 1.5, wPr: .3, wEdge: .3, wMm: 1, wSnp: .8, wSc: .2, wAsym: .5,
+    wCons: .4, wDom: .3, wAtg: .6, wPam: 3, wSeed: 1.5 };
   for (const k in d) $('#' + k).value = d[k];
   $('#fMm').value = 'clean'; $('#fSym').value = 'any'; $('#fTxt').value = '';
-  $('#fStrain').value = 'any';
+  $('#fStrain').value = 'any'; $('#fZone').value = 'nopam'; $('#fAtg').value = 'any';
   setAllExons(true);
 };
 

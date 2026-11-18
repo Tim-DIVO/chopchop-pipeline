@@ -41,6 +41,8 @@ import urllib.parse
 import urllib.request
 import webbrowser
 
+import protein_annot as pann
+
 CHOPCHOP = "https://chopchop.cbu.uib.no"
 UCSC_API = "https://api.genome.ucsc.edu"
 UCSC_DL = "https://hgdownload.soe.ucsc.edu/goldenPath"
@@ -268,6 +270,199 @@ def annotate_exons(guides: list[dict], model) -> None:
         g["bp_to_splice"] = -best_d
         g["in_cds"] = "no"
         g["region"] = "intron" if best_d <= 2000 else "outside"
+
+
+# ------------------------------------------------------------------ protein context
+def splice_cds(build: str, chrom: str, idx, strand: str) -> str:
+    """The reference transcript's CDS, spliced from UCSC exon by exon.
+
+    The exons in `idx` are already in transcription order, which on the minus
+    strand means descending genomic coordinates. UCSC always answers with the
+    plus strand, so each block is reverse-complemented INDIVIDUALLY and the
+    blocks are then joined in transcription order. Reverse-complementing the
+    finished concatenation instead would also flip the order of the exons, which
+    silently yields a sequence of the right length that does not start with ATG."""
+    parts = []
+    for d in idx:
+        if not d["coding"]:
+            continue
+        s = ucsc_seq(build, chrom, d["cstart"], d["cend"])
+        parts.append(rc(s) if strand == "-" else s)
+    return "".join(parts)
+
+
+PROTEIN_BLANK = dict(aa="", aa_total="", domains="", domain_flag="", cons="",
+                     cons_sim="", next_atg="", atg_dist="", reinit_keeps="",
+                     first_coding_exon="")
+
+
+def annotate_protein(guides: list[dict], model, build: str, chrom: str,
+                     gene: str | None, cache_dir: str):
+    """Put every guide in its protein context: residue, domain, conservation, and
+    the nearest downstream in-frame ATG that could rescue the protein.
+
+    Returns (protein, cds_index, alt_start_residues) and writes per-guide fields.
+    Any failure here is non-fatal: the protein columns go blank and the rest of
+    the report is unaffected."""
+    for g in guides:
+        g.update(PROTEIN_BLANK)
+    if model is None or not gene:
+        return None, [], []
+    idx = pann.cds_index(model)
+    strand = model[1]
+    first_cod = pann.first_coding_exon(idx)
+
+    cds = ""
+    try:
+        cds = splice_cds(build, chrom, idx, strand)
+    except Exception as e:                                        # noqa: BLE001
+        sys.stderr.write(f"      could not splice the CDS ({e}); "
+                         "alternative-start analysis skipped\n")
+    atg: list[int] = []
+    if cds:
+        if len(cds) % 3:
+            sys.stderr.write(f"      spliced CDS is {len(cds)} bp, not a multiple "
+                             "of 3; alternative-start analysis skipped\n")
+        elif not cds.startswith("ATG"):
+            sys.stderr.write(f"      spliced CDS starts {cds[:3]}, not ATG; "
+                             "alternative-start analysis skipped\n")
+        else:
+            atg = pann.alt_starts(cds)
+            sys.stderr.write(f"      CDS {len(cds)} bp, {len(atg)} in-frame ATG "
+                             f"codons downstream of the initiator"
+                             + (f" (first at Met{atg[0]})" if atg else "") + "\n")
+
+    protein = None
+    try:
+        protein = pann.build(gene, cache_dir)
+    except Exception as e:                                        # noqa: BLE001
+        sys.stderr.write(f"      UniProt lookup failed ({e}); domain and "
+                         "conservation columns blank\n")
+    if protein:
+        who = (f"{protein['zf_acc']} ({protein['zf_len']} aa)"
+               if protein["zf_reviewed"] else
+               f"{protein['zf_acc']} ({protein['zf_len']} aa, unreviewed)")
+        msg = f"      protein {who}, {len(protein['domains'])} domain spans"
+        if protein["hs_acc"]:
+            msg += (f"; human {protein['hs_acc']} {protein['ident_pct']}% identity, "
+                    f"{protein['simil_pct']}% similarity")
+        sys.stderr.write(msg + "\n")
+        aa_total = protein["zf_len"]
+        if cds and aa_total not in (len(cds) // 3, len(cds) // 3 - 1):
+            protein["notes"].append(
+                f"The UniProt protein is {aa_total} aa but the RefSeq CDS encodes "
+                f"{len(cds)//3 - 1} aa. Residue numbers, and so the domain column, "
+                "may be offset; check before relying on them.")
+    else:
+        aa_total = ""
+
+    for g in guides:
+        cut0 = g["cut"] - 1
+        g["first_coding_exon"] = first_cod or ""
+        off = pann.cds_offset_of(cut0, idx, strand)
+        if off is None:
+            continue
+        aa = off // 3 + 1
+        g["aa"] = aa
+        g["aa_total"] = aa_total
+        if protein:
+            hits = [d for d in protein["domains"] if d["start"] <= aa <= d["end"]]
+            g["domains"] = "; ".join(
+                f"{d['label']}{' (projected)' if d['proj'] else ''}" for d in hits)
+            g["domain_flag"] = "; ".join(d["note"] for d in hits if d["note"])
+            if protein["ident"] and aa < len(protein["ident"]):
+                g["cons"] = protein["ident"][aa] if protein["ident"][aa] is not None else ""
+                g["cons_sim"] = (protein["simil"][aa]
+                                 if protein["simil"][aa] is not None else "")
+        nxt = next((m for m in atg if m > aa), None)
+        if nxt:
+            g["next_atg"] = nxt
+            g["atg_dist"] = nxt - aa
+            if cds:
+                g["reinit_keeps"] = round(
+                    100.0 * (len(cds) // 3 - nxt) / max(1, len(cds) // 3 - 1), 1)
+    return protein, idx, atg
+
+
+# ------------------------------------------------------------------- SNP zones
+# Where in the 23-mer a SNP sits decides whether it matters. SpCas9 reads the two
+# Gs of NGG through Arg1333/Arg1335 (Anders 2014), so a variant there is
+# near-abolishing; the N is not read at all. Inside the protospacer, the ~10 nt
+# nearest the PAM (the seed) are the strict ones, while the PAM-distal 10 are
+# largely tolerated (Hsu 2013; Doench 2016).
+SNP_ZONES = {
+    "pam_g": ("critical", "PAM G, read by Cas9 - expect little or no cutting"),
+    "seed": ("high", "PAM-proximal seed - a mismatch here strongly reduces cutting"),
+    "distal": ("low", "PAM-distal - usually tolerated"),
+    "pam_n": ("negligible", "the N of NGG, not read by Cas9"),
+}
+SNP_ZONE_RANK = {"pam_g": 3, "seed": 2, "distal": 1, "pam_n": 0}
+
+
+def snp_zone_of(idx: int) -> tuple[str, str]:
+    """Zone and human-readable position for a 0-based offset into the 23-mer."""
+    if idx >= 20:
+        if idx == 20:
+            return "pam_n", "PAM position 1 (N)"
+        return "pam_g", f"PAM position {idx - 19} (G)"
+    if idx >= 10:
+        return "seed", f"protospacer {idx + 1}/20, seed"
+    return "distal", f"protospacer {idx + 1}/20, PAM-distal"
+
+
+def annotate_snp_zones(guides: list[dict]) -> None:
+    """Classify every SNPfisher hit by its position in the 23-mer.
+
+    The guide's Zv9 window always runs low to high in genomic coordinates, while
+    `target` is written on the guide strand. So for a plus-strand guide the k-th
+    base of the target is at window start + k, and for a minus-strand guide it is
+    at window end - k, which puts the PAM at the three LOWEST coordinates."""
+    for g in guides:
+        g.update(snp_pam="", snp_seed="", snp_distal="", snp_worst="",
+                 snp_worst_zone="", **{f"snp_pam_{k}": "" for k in SNP_STRAINS})
+        rows = g.get("snp_detail") or []
+        zv9 = g.get("zv9") or ""
+        m = re.match(r"(\w+):(\d+)-(\d+)$", zv9)
+        if not rows or not m:
+            # A guide that was queried and came back clean reports 0, not blank;
+            # blank is reserved for "never queried" (no liftover, or --snp-top).
+            if isinstance(g.get("snps"), int):
+                g.update(snp_pam=0, snp_seed=0, snp_distal=0,
+                         **{f"snp_pam_{k}": 0 for k in SNP_STRAINS})
+            continue
+        lo, hi = int(m.group(2)), int(m.group(3))
+        counts = {"pam_g": 0, "seed": 0, "distal": 0, "pam_n": 0}
+        strain_pam = {k: 0 for k in SNP_STRAINS}
+        worst = None
+        for s in rows:
+            try:
+                pos = int(s["Pos"])
+            except (KeyError, ValueError):
+                continue
+            k = (pos - lo) if g["strand"] == "+" else (hi - pos)
+            if not 0 <= k <= 22:
+                continue
+            zone, where = snp_zone_of(k)
+            s["zone"] = zone
+            s["zone_sev"] = SNP_ZONES[zone][0]
+            s["where"] = where
+            s["offset"] = k
+            s["base"] = g["target"][k] if k < len(g["target"]) else ""
+            counts[zone] += 1
+            if zone == "pam_g":
+                for st, col in SNP_STRAINS.items():
+                    if _fq(s.get(col)) > 0:
+                        strain_pam[st] += 1
+            if worst is None or SNP_ZONE_RANK[zone] > SNP_ZONE_RANK[worst]:
+                worst = zone
+        g["snp_pam"] = counts["pam_g"]
+        g["snp_seed"] = counts["seed"]
+        g["snp_distal"] = counts["distal"] + counts["pam_n"]
+        if worst:
+            g["snp_worst_zone"] = worst
+            g["snp_worst"] = SNP_ZONES[worst][0]
+        for st in SNP_STRAINS:
+            g[f"snp_pam_{st}"] = strain_pam[st]
 
 
 # --------------------------------------------------------------------------- liftover
@@ -505,6 +700,11 @@ def run(args) -> None:
     else:
         sys.stderr.write("      no coding RefSeq transcript found; exon columns blank\n")
 
+    # 3b. protein context: domains, conservation, alternative start codons -----
+    sys.stderr.write("[3/6] annotating protein context ...\n")
+    protein, cds_idx, alt_atg = annotate_protein(
+        guides, model, build, main_chrom, gene, cache)
+
     # 4. inDelphi + primers ----------------------------------------------------
     sys.stderr.write(f"[4/6] fetching inDelphi + primers for {len(guides)} guides ...\n")
     miss_rep = miss_prim = got_primers = 0
@@ -633,6 +833,14 @@ def run(args) -> None:
         nsnp = sum(1 for g in target if isinstance(g["snps"], int) and g["snps"] > 0)
         sys.stderr.write(f"      {nsnp} of {len(target)} carry at least one SNP\n")
 
+    # 5b. where each SNP sits in the 23-mer (PAM / seed / distal) --------------
+    annotate_snp_zones(guides)
+    npam = sum(1 for g in guides if (g.get("snp_pam") or 0) > 0)
+    nseed = sum(1 for g in guides if (g.get("snp_seed") or 0) > 0)
+    if npam or nseed:
+        sys.stderr.write(f"      {npam} guide(s) carry a SNP in a PAM G (expect "
+                         f"little or no cutting), {nseed} in the PAM-proximal seed\n")
+
     # 6. write -----------------------------------------------------------------
     sys.stderr.write("[6/6] writing outputs ...\n")
     exon_info = []
@@ -642,18 +850,32 @@ def run(args) -> None:
         for g in guides:
             if g.get("region") == "exon" and g.get("exon"):
                 counts[g["exon"]] = counts.get(g["exon"], 0) + 1
+        geo = {d["n"]: d for d in (cds_idx or [])}
+        first_cod = pann.first_coding_exon(cds_idx) if cds_idx else None
         for i, (a, b) in enumerate(_exons, 1):
             coding = max(0, min(b, _cds1) - max(a, _cds0))
-            exon_info.append({
+            d = geo.get(i) or {}
+            aa0, aa1 = d.get("aa0"), d.get("aa1")
+            e = {
                 "n": i, "len": b - a, "coding": coding,
                 "symmetry": ("noncoding" if coding == 0 else
                              "asymmetric" if coding % 3 else "symmetric"),
                 "guides": counts.get(i, 0),
-                "first": i == 1, "last": i == len(_exons)})
+                "first": i == 1, "last": i == len(_exons),
+                "aa0": aa0, "aa1": aa1, "phase": d.get("phase"),
+                "firstCoding": i == first_cod,
+                # in-frame ATGs inside this exon: each one is a place a 5'
+                # frameshift could be bypassed by re-initiation
+                "atg": [m for m in (alt_atg or []) if aa0 and aa0 <= m <= aa1],
+                "domains": sorted({dd["label"] for dd in (protein or {}).get("domains", [])
+                                   if aa0 and not (dd["end"] < aa0 or dd["start"] > aa1)}),
+            }
+            exon_info.append(e)
     stem = os.path.join(args.out, f"{gene}_{build}")
     write_csv(stem + ".csv", guides, job)
     write_html(stem + ".html", guides, job, gene, build, model, query, snp_fields,
-               exon_info)
+               exon_info, protein, alt_atg,
+               parse_preselect(args.preselect, guides))
     sys.stderr.write(f"\n  CSV  {os.path.abspath(stem + '.csv')}\n")
     sys.stderr.write(f"  HTML {os.path.abspath(stem + '.html')}\n")
     sys.stderr.write(f"  job  {CHOPCHOP}/results/{job}/\n")
@@ -665,11 +887,46 @@ def run(args) -> None:
             print(f"  (could not open a browser: {e})", file=sys.stderr)
 
 
+def parse_preselect(spec: str, guides: list[dict]) -> list[int]:
+    """Ranks to pre-save, from a mix of bare numbers and CHOPCHOP detail URLs.
+
+    Accepts "3, 11, 15" or a block of pasted .../details/<n> links, in any mix.
+    Ranks that no guide carries are reported and dropped rather than silently
+    pinned to nothing."""
+    if not spec:
+        return []
+    want: list[int] = []
+    for tok in re.split(r"[,\s]+", spec.strip()):
+        if not tok:
+            continue
+        m = re.search(r"/details/(\d+)", tok) or re.fullmatch(r"(\d+)", tok)
+        if not m:
+            sys.stderr.write(f"      --preselect: cannot read {tok!r}, skipped\n")
+            continue
+        r = int(m.group(1))
+        if r not in want:
+            want.append(r)
+    have = {g["rank"] for g in guides}
+    good = [r for r in want if r in have]
+    missing = [r for r in want if r not in have]
+    if missing:
+        sys.stderr.write("      --preselect: no guide with rank "
+                         f"{', '.join(map(str, missing))} in this job, skipped\n")
+    if good:
+        sys.stderr.write(f"      pre-saved {len(good)} guide(s): "
+                         f"{', '.join(map(str, good))}\n")
+    return good
+
+
 def write_csv(path: str, guides: list[dict], job: str) -> None:
     cols = ["rank", "target", "proto", "pam", "chrom", "start", "strand", "cut",
             "exon", "exon_total", "region", "symmetry", "bp_to_splice", "in_cds",
             "efficiency", "frameshift", "precision", "mh_del", "exp_indel",
             "gc", "selfcompl", "mm0", "mm1", "mm2", "mm3", "zv9", "snps", "snp_fli", "snp_tl", "snp_wik",
+            "snp_pam", "snp_seed", "snp_distal", "snp_worst", "snp_worst_zone",
+            "snp_pam_fli", "snp_pam_tl", "snp_pam_wik",
+            "aa", "aa_total", "domains", "cons", "cons_sim",
+            "next_atg", "atg_dist", "reinit_keeps", "first_coding_exon",
             "details_url"]
     nprim = max((len(g.get("primers") or []) for g in guides), default=0)
     pcols = []
@@ -690,7 +947,7 @@ def write_csv(path: str, guides: list[dict], job: str) -> None:
 
 
 def write_html(path: str, guides, job, gene, build, model, query, snp_fields,
-               exon_info=None) -> None:
+               exon_info=None, protein=None, alt_atg=None, prepins=None) -> None:
     tpl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "report_template.html")
     if not os.path.exists(tpl_path):
         raise PipelineError(f"missing HTML template at {tpl_path}",
@@ -708,14 +965,54 @@ def write_html(path: str, guides, job, gene, build, model, query, snp_fields,
         "cdsLen": model[5] if model else None,
         "aaLen": (model[5] // 3 - 1) if model else None,
         "scoring": scoring,
+        # Path to this gene's guide CSV, relative to crispr_tools/, so the
+        # report can assemble the primer_design.py command for the starred
+        # guides instead of making the reader reconstruct it.
+        "csvPath": os.path.relpath(
+            os.path.splitext(path)[0] + ".csv",
+            os.path.dirname(os.path.abspath(__file__))).replace("\\", "/"),
         "generated": time.strftime("%Y-%m-%d %H:%M"),
         "snpFields": snp_fields or {},
         "exonInfo": exon_info or [],
         "guides": guides,
+        # The per-residue conservation arrays are the bulky part of this, so they
+        # are dropped: every guide already carries the value at its own cut site.
+        "protein": ({k: v for k, v in protein.items()
+                     if k not in ("ident", "simil", "zf_seq")} if protein else None),
+        "altAtg": alt_atg or [],
+        "prePins": prepins or [],
     }
     blob = json.dumps(payload).replace("</", "<\\/")   # keep </script> out of the literal
+    out = tpl.replace("/*__DATA__*/", blob)
+
+    # The primer shortlist lives in a separate file written by primer_design.py,
+    # which runs after this pipeline and knows nothing about it. Inject it when
+    # it exists, filtered to this gene; otherwise inject null so the Primers tab
+    # can say "not run" rather than render an empty table.
+    if "/*__PRIMERS__*/" in out:
+        out = out.replace("/*__PRIMERS__*/", _primer_blob(gene))
     with open(path, "w", encoding="utf-8") as fh:
-        fh.write(tpl.replace("/*__DATA__*/", blob))
+        fh.write(out)
+
+
+def _primer_blob(gene: str, cand: str | None = None) -> str:
+    """JSON for the report's Primers tab, or 'null' if the designer hasn't run."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    cand = cand or os.path.join(here, "primers_out", "candidates.json")
+    if not os.path.exists(cand):
+        return "null"
+    try:
+        with open(cand, encoding="utf-8") as fh:
+            d = json.load(fh)
+    except Exception:
+        return "null"
+    loci = [L for L in d.get("loci", []) if L.get("gene") == gene]
+    if not loci:
+        return "null"
+    return json.dumps({"shared_tm": d.get("shared_tm"),
+                       "params": d.get("params"),
+                       "tm_scan": d.get("tm_scan", []),
+                       "loci": loci}).replace("</", "<\\/")
 
 
 def main() -> None:
@@ -735,6 +1032,10 @@ def main() -> None:
                     help="query SNPfisher for the top N guides by CHOPCHOP rank. "
                          "Default 0 = all of them; SNPfisher is queried in a single "
                          "batched request, so restricting it saves almost nothing")
+    ap.add_argument("--preselect", default="",
+                    help="guides to pre-save in the report, pinned to the top of "
+                         "the table: CHOPCHOP ranks and/or full .../details/<n> "
+                         "URLs, comma- or whitespace-separated")
     ap.add_argument("--delay", type=float, default=0.2, help="seconds between per-guide fetches")
     ap.add_argument("--timeout", type=int, default=900, help="seconds to wait for the job")
     ap.add_argument("-o", "--out", default="chopchop_out", help="output directory")

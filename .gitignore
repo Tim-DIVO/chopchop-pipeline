@@ -6,3 +6,5 @@ out_*/
 *.csv
 *_danRer*.html
 __pycache__/
+primers_out*/
+DESIGN_NOTES*
